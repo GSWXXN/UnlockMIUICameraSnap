@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Unlock MIUI Camera Snap</string>
+    <string name="xposed_desc">解锁MIUI街拍模式</string>
+</resources>
