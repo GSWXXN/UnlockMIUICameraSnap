@@ -149,7 +149,7 @@ class SnapCamera(val instance: Any?) {
             try {
                 prepare()
             } catch (e: IOException) {
-                loggerD( msg = "prepare failed for $mPath $e")
+                loggerE( msg = "prepare failed for $mPath ${e.message}", e = e)
             }
         }
 
