@@ -9,7 +9,7 @@ class SnapTrigger(private val instance: Any) {
 
 
     companion object {
-        const val MAX_VIDEO_DURATION = 0
+        const val MAX_VIDEO_DURATION = 3600000
     }
 
     val mCamera get() = SnapCamera.getWrapper(instance.current().field { name = "mCamera" }.any())
