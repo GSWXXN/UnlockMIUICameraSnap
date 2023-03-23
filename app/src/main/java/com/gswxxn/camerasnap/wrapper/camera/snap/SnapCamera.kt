@@ -136,13 +136,14 @@ class SnapCamera(val instance: Any?) {
             loggerD(msg = "save to $mPath")
             setOutputFile(mPath)
 
-            setOnErrorListener { _, _, _ ->
+            setOnErrorListener { _, what, _ ->
+                loggerD(msg = "stopCamcorder: MediaRecorder error: $what")
                 stopCamcorder()
             }
             setOnInfoListener { _, what, _ ->
                 if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED ||
                     what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) {
-                    loggerD(msg = "duration or file size reach MAX, $what")
+                    loggerD(msg = "stopCamcorder: duration or file size reach MAX, $what")
                     stopCamcorder()
                 }
             }

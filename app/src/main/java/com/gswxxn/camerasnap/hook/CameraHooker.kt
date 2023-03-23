@@ -13,6 +13,7 @@ import com.gswxxn.camerasnap.wrapper.camera.storage.Storage
 import com.highcapable.yukihookapi.hook.factory.current
 import com.highcapable.yukihookapi.hook.log.loggerD
 import com.highcapable.yukihookapi.hook.log.loggerE
+import com.highcapable.yukihookapi.hook.log.loggerW
 import com.highcapable.yukihookapi.hook.type.java.CharSequenceClass
 import com.highcapable.yukihookapi.hook.type.java.StringClass
 import io.luckypray.dexkit.DexKitBridge
@@ -177,6 +178,7 @@ object CameraHooker: BaseHookerWithDexKit() {
                 }
                 beforeHook {
                     try {
+                        loggerW(msg = "stopCamcorder: release")
                         SnapCamera.getWrapper(instance).stopCamcorder()
                         SnapCamera.removeWrapper(instance)
                     } catch (e: Exception) {
