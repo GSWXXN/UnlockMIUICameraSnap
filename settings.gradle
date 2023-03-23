@@ -15,3 +15,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "UnlockMIUICameraSnap"
 include ':app'
+include ':api:api'
+include ':api:stub'

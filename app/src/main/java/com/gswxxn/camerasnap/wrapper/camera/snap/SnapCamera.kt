@@ -13,6 +13,7 @@ import android.media.CamcorderProfile
 import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Handler
+import android.os.HandlerExecutor
 import android.os.HandlerThread
 import android.os.Process
 import com.gswxxn.camerasnap.wrapper.camera.storage.Storage.getAvailableSpace
@@ -28,12 +29,10 @@ import com.highcapable.yukihookapi.hook.factory.*
 import com.highcapable.yukihookapi.hook.log.loggerD
 import com.highcapable.yukihookapi.hook.log.loggerE
 import com.highcapable.yukihookapi.hook.log.loggerW
-import com.highcapable.yukihookapi.hook.type.android.HandlerClass
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Locale
-import java.util.concurrent.Executor
 
 class SnapCamera(val instance: Any?) {
 
@@ -290,8 +289,7 @@ class SnapCamera(val instance: Any?) {
             val sessionConfiguration = SessionConfiguration(
                 SessionConfiguration.SESSION_REGULAR,
                 outputConfigurations,
-                "android.os.HandlerExecutor".toClass().constructor { param(HandlerClass) }.get()
-                    .newInstance<Executor>(mCameraHandler)!!,
+                HandlerExecutor(mCameraHandler),
                 sessionStateCallback
             )
             mCameraDevice!!.createCaptureSession(sessionConfiguration)
