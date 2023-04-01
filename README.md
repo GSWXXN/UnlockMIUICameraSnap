@@ -2,7 +2,7 @@
 
 # UnlockMIUICameraSnap
 [![Xposed](https://img.shields.io/badge/-Xposed-green?style=flat&logo=Android&logoColor=white)](#)
-[![GitHub](https://img.shields.io/github/license/GSWXXN/UnlockMIUICameraSnap)](https://github.com/GSWXXN/UnlockMIUICameraSnap/blob/master/LICENSE)
+[![GitHub](https://img.shields.io/github/license/GSWXXN/UnlockMIUICameraSnap)](https://github.com/GSWXXN/UnlockMIUICameraSnap/blob/main/LICENSE)
 [![GitHub tag (latest by date)](https://img.shields.io/github/v/tag/GSWXXN/UnlockMIUICameraSnap?label=version)](https://github.com/Xposed-Modules-Repo/com.gswxxn.camerasnap/releases)
 [![GitHub all releases](https://img.shields.io/github/downloads/Xposed-Modules-Repo/com.gswxxn.camerasnap/total?label=Downloads)](https://github.com/Xposed-Modules-Repo/com.gswxxn.camerasnap/releases)
 
