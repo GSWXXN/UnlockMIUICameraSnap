@@ -77,15 +77,15 @@ class SnapCamera(val instance: Any?) {
     /**
      * 根据设备方向和摄像头方向，设置录制视频时的方向提示
      */
-    private fun setRecorderOrientationHint() {
+    private fun getRecorderOrientationHint(): Int {
         var sensorOrientation = this.mCameraCapabilities.getSensorOrientation()
         if (this.mOrientation != -1) {
             sensorOrientation =
                 if (this.mCameraCapabilities.getFacing() == 0) (sensorOrientation - this.mOrientation + 360) % 360
                 else (sensorOrientation + this.mOrientation) % 360
         }
-        loggerD(msg = "setOrientationHint: $sensorOrientation")
-        mMediaRecorder?.setOrientationHint(sensorOrientation)
+        loggerD(msg = "getOrientationHint: $sensorOrientation")
+        return sensorOrientation
     }
 
     /**
@@ -127,7 +127,7 @@ class SnapCamera(val instance: Any?) {
             setAudioSource(MediaRecorder.AudioSource.CAMCORDER)
             setVideoSource(MediaRecorder.VideoSource.SURFACE)
             setProfile(mProfile)
-            setRecorderOrientationHint()
+            setOrientationHint(getRecorderOrientationHint())
             setMaxDuration(mProfile.duration)
             // TODO: 位置信息没有被写入, 可能是相机没有后台获取位置权限
             currentLocation?.let { setLocation(currentLocation.latitude.toFloat(), currentLocation.longitude.toFloat()) }
