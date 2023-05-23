@@ -1,16 +1,16 @@
 package com.gswxxn.camerasnap.wrapper.camera
 
 import com.gswxxn.camerasnap.constant.Key
+import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.gswxxn.camerasnap.wrapper.base.StaticClass
-import com.highcapable.yukihookapi.hook.factory.field
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.type.java.IntType
 
 object CameraSettings: StaticClass() {
     override val className: String
-        get() = "com.android.camera.CameraSettings"
+        get() = CameraMembers.SettingsMembers.cCameraSettings.name
 
-    val KEY_CAMERA_SNAP = clazz.field { name = "KEY_CAMERA_SNAP" }.get().string()
+    const val KEY_CAMERA_SNAP = "pref_camera_snap_key"
 
     fun getPreferVideoQuality(cameraId: Int, defaultQuality: Int) = clazz.method {
         name = "getPreferVideoQuality"

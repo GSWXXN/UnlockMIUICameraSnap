@@ -4,6 +4,7 @@ import com.gswxxn.camerasnap.dexkit.base.BaseFinder
 import com.highcapable.yukihookapi.hook.core.YukiMemberHookCreator
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import io.luckypray.dexkit.DexKitBridge
+import io.luckypray.dexkit.builder.MethodCallerArgs
 import io.luckypray.dexkit.builder.MethodInvokingArgs
 import io.luckypray.dexkit.descriptor.member.DexMethodDescriptor
 import java.lang.reflect.Method
@@ -57,6 +58,21 @@ abstract class BaseHookerWithDexKit: YukiBaseHooker() {
         val flatMap = invokingList.flatMap { it.value }
 
         require(flatMap.size == 1) { "uniqueFindMethodInvoking() Error: invokingList must contain exactly one item; Data: $invokingList" }
+
+        return flatMap.first().getMethodInstance()
+    }
+
+    /**
+    * 查找调用给定方法的函数, 如果有多个查找到的函数, 则会抛出异常
+    *
+    * @throws [IllegalArgumentException]
+    * @return [Method]
+    */
+    fun DexKitBridge.uniqueFindMethodCalling(builder: MethodCallerArgs.Builder.() -> Unit): Method {
+        val callingList = findMethodCaller(builder)
+        val flatMap = callingList.flatMap { it.value }
+
+        require(flatMap.size == 1) { "uniqueFindMethodCalling() Error: callingList must contain exactly one item; Data: $callingList" }
 
         return flatMap.first().getMethodInstance()
     }

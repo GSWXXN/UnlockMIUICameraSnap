@@ -2,7 +2,7 @@ package com.gswxxn.camerasnap.wrapper.camera.snap
 
 import android.os.Handler
 import android.os.PowerManager
-import com.highcapable.yukihookapi.hook.factory.current
+import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.highcapable.yukihookapi.hook.log.loggerD
 
 class SnapTrigger(private val instance: Any) {
@@ -12,14 +12,13 @@ class SnapTrigger(private val instance: Any) {
         const val MAX_VIDEO_DURATION = 3600000
     }
 
-    val mCamera get() = SnapCamera.getWrapper(instance.current().field { name = "mCamera" }.any())
-    val mPowerManager get() = instance.current().field { name = "mPowerManager" }.cast<PowerManager>()
-    private val mHandler get() = instance.current().field { name = "mHandler" }.cast<Handler>()
+    val mCamera get() = SnapCamera.getWrapper(CameraMembers.SnapTriggerMembers.fMCamera.get(instance))
+    val mPowerManager get() = CameraMembers.SnapTriggerMembers.fMPowerManager.get(instance) as PowerManager?
+    private val mHandler get() = CameraMembers.SnapTriggerMembers.fMHandler.get(instance) as Handler?
 
-    fun shouldQuitSnap() = instance.current().method {
-        name = "shouldQuitSnap"
-        emptyParam()
-    }.boolean()
+    fun shouldQuitSnap() = CameraMembers.SnapTriggerMembers.mShouldQuitSnap.invoke(instance) as Boolean
+    fun vibratorShort() { CameraMembers.SnapTriggerMembers.mVibratorShort.invoke(instance) }
+
 
     fun shutdownWatchDog() {
         if (this.mHandler != null) {
@@ -27,10 +26,4 @@ class SnapTrigger(private val instance: Any) {
             this.mHandler!!.removeMessages(101)
         }
     }
-
-    fun vibratorShort() = instance.current().method {
-        name = "vibratorShort"
-        emptyParam()
-    }.call()
-
 }

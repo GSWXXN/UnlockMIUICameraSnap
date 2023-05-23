@@ -2,6 +2,7 @@ package com.gswxxn.camerasnap.hook.camera
 
 import android.provider.Settings
 import com.gswxxn.camerasnap.constant.Key
+import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.gswxxn.camerasnap.wrapper.camera.snap.SnapCamera
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.log.loggerE
@@ -10,7 +11,7 @@ import com.highcapable.yukihookapi.hook.log.loggerW
 /** CameraSnap 类的 Hooker **/
 object CameraSnapHooker: YukiBaseHooker() {
     override fun onHook() {
-        "com.android.camera.snap.SnapCamera".hook {
+        CameraMembers.SnapCameraMembers.cSnapCamera.hook {
 
             /**
              * 替换街拍时的模式获取, 原方法无论街拍配置为何值, 均禁用录像模式

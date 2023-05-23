@@ -1,7 +1,6 @@
 package com.gswxxn.camerasnap.hook.camera
 
 import com.gswxxn.camerasnap.dexkit.CameraMembers
-import com.gswxxn.camerasnap.hook.CameraHooker.methodHook
 import com.gswxxn.camerasnap.hook.CameraHooker.onFindMembers
 import com.gswxxn.camerasnap.wrapper.camera.snap.SnapTrigger
 import com.gswxxn.camerasnap.wrapper.camera.statistic.CameraStatUtils
@@ -21,22 +20,25 @@ object CameraTriggerHooker: YukiBaseHooker() {
          *
          * 原始类位置为 com.android.camera.snap.SnapTrigger
          */
-        CameraMembers.SnapTriggerMembers.mSnapRunner.methodHook {
-            replaceUnit {
-                val mSnapTrigger = SnapTrigger(field { name = "this\$0" }.get(instance).any()!!)
+        CameraMembers.SnapTriggerMembers.mSnapRunner.declaringClass.hook {
+            injectMember {
+                members(CameraMembers.SnapTriggerMembers.mSnapRunner)
+                replaceUnit {
+                    val mSnapTrigger = SnapTrigger(field { name = "this\$0" }.get(instance).any()!!)
 
-                if (mSnapTrigger.mCamera.instance == null || !mSnapTrigger.mCamera.mIsCamcorder) {
-                    callOriginal()
-                    return@replaceUnit
-                }
+                    if (mSnapTrigger.mCamera.instance == null || !mSnapTrigger.mCamera.mIsCamcorder) {
+                        callOriginal()
+                        return@replaceUnit
+                    }
 
-                if (mSnapTrigger.mPowerManager == null || !mSnapTrigger.mPowerManager!!.isInteractive) {
-                    if (!mSnapTrigger.shouldQuitSnap() && Storage.getAvailableSpace() >= Storage.LOW_STORAGE_THRESHOLD) {
-                        mSnapTrigger.shutdownWatchDog()
-                        mSnapTrigger.vibratorShort()
-                        mSnapTrigger.mCamera.startCamcorder()
-                        loggerD(msg = "take movie")
-                        CameraStatUtils.trackSnapInfo(true)
+                    if (mSnapTrigger.mPowerManager == null || !mSnapTrigger.mPowerManager!!.isInteractive) {
+                        if (!mSnapTrigger.shouldQuitSnap() && Storage.getAvailableSpace() >= Storage.LOW_STORAGE_THRESHOLD) {
+                            mSnapTrigger.shutdownWatchDog()
+                            mSnapTrigger.vibratorShort()
+                            mSnapTrigger.mCamera.startCamcorder()
+                            loggerD(msg = "take movie")
+                            CameraStatUtils.trackSnapInfo(true)
+                        }
                     }
                 }
             }

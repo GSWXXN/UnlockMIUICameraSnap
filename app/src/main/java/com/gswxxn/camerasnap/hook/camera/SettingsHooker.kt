@@ -9,7 +9,6 @@ import com.gswxxn.camerasnap.wrapper.camera.fragment.settings.CameraPreferenceFr
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.factory.current
 import com.highcapable.yukihookapi.hook.type.java.CharSequenceClass
-import com.highcapable.yukihookapi.hook.type.java.StringClass
 
 /** 相机配置及设置项的 Hooker **/
 object SettingsHooker: YukiBaseHooker() {
@@ -95,15 +94,9 @@ object SettingsHooker: YukiBaseHooker() {
          *
          * 原方法无论街拍配置为何值, 均返回街拍模式 A, 即息屏拍照
          */
-        "com.android.camera.CameraSettings".hook {
-            injectMember {
-                method {
-                    name = "getMiuiSettingsKeyForStreetSnap"
-                    param(StringClass)
-                }
-                replaceAny {
-                    CameraSettings.getMiuiSettingsKeyForStreetSnap(args[0].toString())
-                }
+        CameraMembers.SettingsMembers.mGetMiuiSettingsKeyForStreetSnap.methodHook {
+            replaceAny {
+                CameraSettings.getMiuiSettingsKeyForStreetSnap(args[0].toString())
             }
         }
     }
