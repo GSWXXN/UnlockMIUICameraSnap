@@ -16,6 +16,8 @@ import android.os.Handler
 import android.os.HandlerExecutor
 import android.os.HandlerThread
 import android.os.Process
+import com.gswxxn.camerasnap.dexkit.CameraMembers
+import com.gswxxn.camerasnap.utils.ReflectUtils.setValue
 import com.gswxxn.camerasnap.wrapper.camera.storage.Storage.getAvailableSpace
 import com.gswxxn.camerasnap.wrapper.base.StaticClass
 import com.gswxxn.camerasnap.wrapper.camera.CameraSettings
@@ -37,10 +39,10 @@ import java.util.Locale
 class SnapCamera(val instance: Any?) {
 
     companion object: StaticClass() {
-        override val className get() = "com.android.camera.snap.SnapCamera"
+        override val className: String get() = CameraMembers.SnapCameraMembers.cSnapCamera.name
         private val wrappers = mutableMapOf<Any?, SnapCamera>()
 
-        val SUFFIX = clazz.field { name = "SUFFIX" }.get().string()
+        const val SUFFIX = "_SNAP"
 
         fun getWrapper(instance: Any?) = wrappers.getOrPut(instance) { SnapCamera(instance) }
         fun removeWrapper(instance: Any?) = wrappers.remove(instance)
@@ -48,22 +50,21 @@ class SnapCamera(val instance: Any?) {
 
     class SnapStatusListener(private val instance: Any) {
         fun onDone(uri: Uri?) = instance.current().method {
-            name = "onDone"
             param(Uri::class.java)
         }.call(uri)
     }
 
     // 原始变量
     var mIsCamcorder
-        get() = instance!!.current().field { name = "mIsCamcorder" }.boolean()
-        set(value) { instance!!.current().field { name = "mIsCamcorder" }.set(value) }
-    private val mCameraId get() = instance!!.current().field { name = "mCameraId" }.int()
-    private val mCameraDevice get() = instance!!.current().field { name = "mCameraDevice" }.cast<CameraDevice>()
-    private val mCameraCapabilities get() = CameraCapabilities(instance!!.current().field { name = "mCameraCapabilities" }.any())
-    private val mOrientation get() = instance!!.current().field { name = "mOrientation" }.int()
-    private val mCameraHandler get() = instance!!.current().field { name = "mCameraHandler" }.cast<Handler>()
-    val mContext get() = instance!!.current().field { name = "mContext" }.cast<Context>()!!
-    private val mStatusListener get() = instance!!.current().field { name = "mStatusListener" }.any()?.let { SnapStatusListener(it) }
+        get() = CameraMembers.SnapCameraMembers.fIsCamcorder.getBoolean(instance)
+        set(value) { CameraMembers.SnapCameraMembers.fIsCamcorder.setValue(instance!!, value) }
+    private val mCameraId get() = CameraMembers.SnapCameraMembers.fMCameraId.getInt(instance)
+    private val mCameraDevice get() = CameraMembers.SnapCameraMembers.fMCameraDevice.get(instance) as CameraDevice?
+    private val mCameraCapabilities get() = CameraCapabilities(CameraMembers.SnapCameraMembers.fMCameraCapabilities.get(instance))
+    private val mOrientation get() = CameraMembers.SnapCameraMembers.fMOrientation.getInt(instance)
+    private val mCameraHandler get() = CameraMembers.SnapCameraMembers.fMCameraHandler.get(instance) as Handler?
+    val mContext get() = CameraMembers.SnapCameraMembers.fMContext.get(instance) as Context
+    private val mStatusListener get() = CameraMembers.SnapCameraMembers.fMStatusListener.get(instance)?.let { SnapStatusListener(it) }
 
     // 新增变量
     private var mBackgroundThread: HandlerThread? = null

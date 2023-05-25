@@ -21,6 +21,19 @@ object CameraMembers {
     /** SnapService 类中被混淆成员的存储类 **/
     object SnapCameraMembers {
         lateinit var cSnapCamera: Class<*>
+
+        lateinit var mInitSnapType: Method
+        lateinit var mPlaySound: Method
+        lateinit var mRelease: Method
+
+        lateinit var fIsCamcorder: Field
+        lateinit var fMCameraId: Field
+        lateinit var fMCameraDevice: Field
+        lateinit var fMCameraCapabilities: Field
+        lateinit var fMOrientation: Field
+        lateinit var fMCameraHandler: Field
+        lateinit var fMContext: Field
+        lateinit var fMStatusListener: Field
     }
 
     /** 相机配置及设置项中被混淆成员的存储类 **/

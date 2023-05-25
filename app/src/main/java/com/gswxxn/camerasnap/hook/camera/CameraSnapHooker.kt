@@ -17,10 +17,7 @@ object CameraSnapHooker: YukiBaseHooker() {
              * 替换街拍时的模式获取, 原方法无论街拍配置为何值, 均禁用录像模式
              */
             injectMember {
-                method {
-                    name = "initSnapType"
-                    emptyParam()
-                }
+                members(CameraMembers.SnapCameraMembers.mInitSnapType)
                 replaceUnit {
                     val snapCamera = SnapCamera.getWrapper(instance)
 
@@ -38,10 +35,7 @@ object CameraSnapHooker: YukiBaseHooker() {
              * 移除街拍时的声音
              */
             injectMember {
-                method {
-                    name = "playSound"
-                    emptyParam()
-                }
+                members(CameraMembers.SnapCameraMembers.mPlaySound)
                 intercept()
             }
 
@@ -49,10 +43,7 @@ object CameraSnapHooker: YukiBaseHooker() {
              * 添加街拍结束后的视频资源释放, 原方法未对街拍录像模式进行处理
              */
             injectMember {
-                method {
-                    name = "release"
-                    emptyParam()
-                }
+                members(CameraMembers.SnapCameraMembers.mRelease)
                 beforeHook {
                     try {
                         loggerW(msg = "stopCamcorder: release")
