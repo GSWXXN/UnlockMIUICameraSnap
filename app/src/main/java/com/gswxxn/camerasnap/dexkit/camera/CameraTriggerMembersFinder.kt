@@ -4,7 +4,6 @@ import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.gswxxn.camerasnap.dexkit.base.BaseFinder
 import com.gswxxn.camerasnap.hook.CameraHooker
 import com.gswxxn.camerasnap.hook.CameraHooker.getMethodInstance
-import com.gswxxn.camerasnap.hook.CameraHooker.uniqueFindMethodCalling
 import com.gswxxn.camerasnap.utils.DexKitHelper
 import com.highcapable.yukihookapi.hook.factory.field
 import com.highcapable.yukihookapi.hook.factory.method
@@ -31,7 +30,7 @@ object CameraTriggerMembersFinder: BaseFinder() {
     private fun oldMembers() {
         CameraMembers.SnapTriggerMembers.cSnapTrigger = "com.android.camera.snap.SnapTrigger".toClass(CameraHooker.appClassLoader)
 
-        CameraMembers.SnapTriggerMembers.mVibratorShort = CameraMembers.SnapTriggerMembers.cSnapTrigger.method {
+        CameraMembers.SnapTriggerMembers.mVibrator = CameraMembers.SnapTriggerMembers.cSnapTrigger.method {
             name = "vibratorShort"
             emptyParam()
         }.give()!!
@@ -50,24 +49,18 @@ object CameraTriggerMembersFinder: BaseFinder() {
         }
 
         // 混淆前类名 com.android.camera.snap.SnapTrigger
-        CameraMembers.SnapTriggerMembers.cSnapTrigger = batchFindClassesUsingStringsResultMap["SnapTrigger"]!!.first().name.toClass()
+        CameraMembers.SnapTriggerMembers.cSnapTrigger = batchFindClassesUsingStringsResultMap["SnapTrigger"]!!.first().name.toClass(CameraHooker.appClassLoader)
 
 
         val batchFindMethodsUsingStringsResultMap = bridge.batchFindMethodsUsingStrings {
-            addQuery("mVibratorShort", arrayOf("call vibrate to notify"))
+            addQuery("mVibrator", arrayOf("call vibrate to notify"))
             addQuery("mShouldQuitSnap", arrayOf("shouldQuitSnap isNonUI = "))
             matchType = MatchType.FULL
         }
-        // 混淆前方法名 vibratorShort
-        val vibratorDescriptor = batchFindMethodsUsingStringsResultMap["mVibratorShort"]!!.first{
+        // 混淆前方法名 vibrator
+        CameraMembers.SnapTriggerMembers.mVibrator = batchFindMethodsUsingStringsResultMap["mVibrator"]!!.first{
             it.returnTypeSig == DexKitHelper.TypeSignature.VOID
-        }
-        CameraMembers.SnapTriggerMembers.mVibratorShort = bridge.uniqueFindMethodCalling {
-            methodDescriptor = vibratorDescriptor.descriptor
-
-            callerMethodParameterTypes = arrayOf()
-            callerMethodReturnType = DexKitHelper.TypeSignature.VOID
-        }
+        }.getMethodInstance()
 
         // 混淆前方法名 shouldQuitSnap
         CameraMembers.SnapTriggerMembers.mShouldQuitSnap = batchFindMethodsUsingStringsResultMap["mShouldQuitSnap"]!!.first{

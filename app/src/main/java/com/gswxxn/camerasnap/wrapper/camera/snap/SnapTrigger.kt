@@ -17,7 +17,7 @@ class SnapTrigger(private val instance: Any) {
     private val mHandler get() = CameraMembers.SnapTriggerMembers.fMHandler.get(instance) as Handler?
 
     fun shouldQuitSnap() = CameraMembers.SnapTriggerMembers.mShouldQuitSnap.invoke(instance) as Boolean
-    fun vibratorShort() { CameraMembers.SnapTriggerMembers.mVibratorShort.invoke(instance) }
+    fun vibratorShort() { CameraMembers.SnapTriggerMembers.mVibrator.invoke(instance, longArrayOf(10, 20)) }
 
 
     fun shutdownWatchDog() {

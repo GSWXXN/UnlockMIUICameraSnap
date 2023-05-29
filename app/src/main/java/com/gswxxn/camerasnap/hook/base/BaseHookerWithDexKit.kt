@@ -46,7 +46,7 @@ abstract class BaseHookerWithDexKit: YukiBaseHooker() {
      *
      * @return [Method]
      */
-    fun DexMethodDescriptor.getMethodInstance() = getMethodInstance(appClassLoader)
+    fun DexMethodDescriptor.getMethodInstance() = getMethodInstance(appClassLoader).apply { isAccessible = true }
 
     /**
      * 查找给定方法的调用函数, 如果有多个查找到的函数, 则会抛出异常
@@ -58,7 +58,15 @@ abstract class BaseHookerWithDexKit: YukiBaseHooker() {
         val invokingList = findMethodInvoking(builder)
         val flatMap = invokingList.flatMap { it.value }
 
-        require(flatMap.size == 1) { "uniqueFindMethodInvoking() Error: invokingList must contain exactly one item; Data: $invokingList" }
+        require(flatMap.size == 1) {
+            var builderInfo = ""
+            builder.javaClass.declaredFields.forEach {
+                it.isAccessible = true
+                builderInfo += ("${it.name}: ${it.get(builder)}\n")
+            }
+            "uniqueFindMethodInvoking() Error: invokingList must contain exactly one item; Data: $invokingList \n Builder: $builderInfo"
+
+        }
 
         return flatMap.first().getMethodInstance()
     }

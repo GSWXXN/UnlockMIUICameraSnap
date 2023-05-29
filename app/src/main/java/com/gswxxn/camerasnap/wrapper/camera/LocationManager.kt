@@ -9,7 +9,7 @@ class LocationManager(private val instance: Any) {
         fun instance() = CameraMembers.OtherMembers.mInstance.invoke(null).let { LocationManager(it!!) }
     }
 
-    fun getCurrentLocation() = CameraMembers.OtherMembers.mGetCurrentLocation.invoke(instance) as Location
+    fun getCurrentLocation() = CameraMembers.OtherMembers.mGetCurrentLocation.invoke(instance) as Location?
 
 
 }

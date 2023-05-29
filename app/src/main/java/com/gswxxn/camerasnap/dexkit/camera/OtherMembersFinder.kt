@@ -28,7 +28,7 @@ object OtherMembersFinder: BaseFinder() {
             addQuery("CameraCapabilities", arrayOf("Screen light brightness: "))
         }
 
-        val mSnapRunnable_runDescriptor = batchFindMethodsUsingStringsResultMap["mSnapRunner"]!!.first {
+        val mSnapRunnable_runDescriptor = batchFindMethodsUsingStringsResultMap["mSnapRunnable_run"]!!.first {
             it.parameterTypesSig == "" && it.returnTypeSig == DexKitHelper.TypeSignature.VOID
         }
 

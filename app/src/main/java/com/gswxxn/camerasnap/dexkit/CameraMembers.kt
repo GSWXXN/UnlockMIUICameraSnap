@@ -11,7 +11,7 @@ object CameraMembers {
 
         lateinit var mSnapRunner: Method
         lateinit var mShouldQuitSnap: Method
-        lateinit var mVibratorShort: Method
+        lateinit var mVibrator: Method
 
         lateinit var fMCamera: Field
         lateinit var fMPowerManager: Field

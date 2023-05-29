@@ -6,7 +6,9 @@ import com.gswxxn.camerasnap.hook.CameraHooker
 import com.gswxxn.camerasnap.hook.CameraHooker.uniqueFindMethodInvoking
 import com.gswxxn.camerasnap.hook.CameraHooker.getMethodInstance
 import com.gswxxn.camerasnap.utils.DexKitHelper
+import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.factory.toClass
+import com.highcapable.yukihookapi.hook.type.java.IntType
 import io.luckypray.dexkit.annotations.DexKitExperimentalApi
 import io.luckypray.dexkit.enums.MatchType
 
@@ -35,6 +37,12 @@ object SettingsMembersFinder: BaseFinder() {
             beInvokedMethodReturnType = DexKitHelper.TypeSignature.BOOLEAN
             beInvokedMethodParameterTypes = arrayOf()
         }
+
+        CameraMembers.SettingsMembers.mGetPreferVideoQuality = CameraMembers.SettingsMembers.cCameraSettings.method {
+            name = "getPreferVideoQuality"
+            param(IntType, IntType)
+            returnType = IntType
+        }.give()!!
     }
 
     /** 查找新版相机(5.0 及以上)的方法 **/
@@ -45,11 +53,11 @@ object SettingsMembersFinder: BaseFinder() {
             matchType = MatchType.FULL
         }
         val batchFindMethodsUsingStringsResultMap = bridge.batchFindMethodsUsingStrings {
-            addQuery("initCamera", arrayOf("initCamera: "))
+            addQuery("getQuality", arrayOf("getQuality: quality = "))
         }
 
         // 混淆前类名 com.android.camera.CameraSettings
-        CameraMembers.SettingsMembers.cCameraSettings = batchFindClassesUsingStringsResultMap["CameraSettings"]!!.first().name.toClass()
+        CameraMembers.SettingsMembers.cCameraSettings = batchFindClassesUsingStringsResultMap["CameraSettings"]!!.first().name.toClass(CameraHooker.appClassLoader)
 
 
         val getCameraSnapSettingNeedDescriptor = bridge.findMethodUsingAnnotation {
@@ -65,12 +73,12 @@ object SettingsMembersFinder: BaseFinder() {
             beInvokedMethodParameterTypes = arrayOf()
         }
 
-        val initCameraDescriptor = batchFindMethodsUsingStringsResultMap["initCamera"]!!.first {
-            it.parameterTypesSig == "" && it.returnTypeSig == DexKitHelper.TypeSignature.VOID
+        val getQualityDescriptor = batchFindMethodsUsingStringsResultMap["getQuality"]!!.first {
+            it.returnTypeSig == DexKitHelper.TypeSignature.INT
         }
         val cameraSettingsClassDescriptor = batchFindClassesUsingStringsResultMap["CameraSettings"]!!.first()
         CameraMembers.SettingsMembers.mGetPreferVideoQuality = bridge.uniqueFindMethodInvoking {
-            methodDescriptor = initCameraDescriptor.descriptor
+            methodDescriptor = getQualityDescriptor.descriptor
 
             beInvokedMethodDeclareClass = cameraSettingsClassDescriptor.name
             beInvokedMethodParameterTypes = arrayOf(DexKitHelper.TypeSignature.INT, DexKitHelper.TypeSignature.INT)

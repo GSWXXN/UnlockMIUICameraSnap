@@ -11,9 +11,6 @@ import com.highcapable.yukihookapi.hook.factory.field
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.factory.toClass
 import com.highcapable.yukihookapi.hook.type.android.ContextClass
-import com.highcapable.yukihookapi.hook.type.android.HandlerClass
-import com.highcapable.yukihookapi.hook.type.java.BooleanType
-import com.highcapable.yukihookapi.hook.type.java.IntType
 import io.luckypray.dexkit.enums.MatchType
 
 /** CameraSnap 类被混淆成员的 Finder **/
@@ -99,7 +96,10 @@ object CameraSnapMembersFinder: BaseFinder(){
         CameraMembers.SnapCameraMembers.cSnapCamera = batchFindClassesUsingStringsResultMap["SnapCamera"]!!.first().name.toClass(CameraHooker.appClassLoader)
 
         // TODO: 使用 order 下标来查找 field, 不可靠
-        CameraMembers.SnapCameraMembers.fIsCamcorder = CameraMembers.SnapCameraMembers.cSnapCamera.field { type(BooleanType).index().first() }.give()!!
+        CameraMembers.SnapCameraMembers.fIsCamcorder = CameraMembers.SnapCameraMembers.cSnapCamera.field {
+//            type(BooleanType).index().first()
+            name = "mIsCamcorder"
+        }.give()!!
 
         CameraMembers.SnapCameraMembers.mInitSnapType = bridge.uniqueFindMethodUsingField {
             fieldDeclareClass = CameraMembers.SnapCameraMembers.fIsCamcorder.declaringClass.name
@@ -116,6 +116,7 @@ object CameraSnapMembersFinder: BaseFinder(){
         CameraMembers.SnapCameraMembers.mPlaySound = bridge.uniqueFindMethodInvoking {
             methodDescriptor = onPictureTakenDescriptor.descriptor
 
+            beInvokedMethodDeclareClass = CameraMembers.SnapCameraMembers.cSnapCamera.name
             beInvokedMethodReturnType = DexKitHelper.TypeSignature.VOID
             beInvokedMethodParameterTypes = arrayOf()
         }
@@ -127,7 +128,8 @@ object CameraSnapMembersFinder: BaseFinder(){
 
         // TODO: 使用 order 下标来查找 field, 不可靠
         CameraMembers.SnapCameraMembers.fMCameraId = CameraMembers.SnapCameraMembers.cSnapCamera.field {
-            type(IntType).index(1)
+            //type(IntType).index(1)
+            name = "mCameraId"
         }.give()!!
 
 
@@ -142,20 +144,22 @@ object CameraSnapMembersFinder: BaseFinder(){
 
         // TODO: 使用 order 下标来查找 field, 不可靠
         CameraMembers.SnapCameraMembers.fMOrientation = CameraMembers.SnapCameraMembers.cSnapCamera.field{
-            type(IntType).index().last()
+//            type(IntType).index().last()
+            name = "mOrientation"
         }.give()!!
 
         // TODO: 使用 order 下标来查找 field, 不可靠
         CameraMembers.SnapCameraMembers.fMCameraHandler = CameraMembers.SnapCameraMembers.cSnapCamera.field{
-            type(HandlerClass).index(-2)
+//            type(HandlerClass).index(-2)
+            name = "mCameraHandler"
         }.give()!!
 
-        // TODO: 使用 order 下标来查找 field, 不可靠
         CameraMembers.SnapCameraMembers.fMContext = CameraMembers.SnapCameraMembers.cSnapCamera.field{
             type(ContextClass).index().first()
         }.give()!!
 
-        val cSnapStatusListener = batchFindClassesUsingStringsResultMap["SnapTrigger"]!!.first().name.toClass().interfaces.first().name.toClass()
+        val cSnapStatusListener = batchFindClassesUsingStringsResultMap["SnapTrigger"]!!.first().name.toClass(CameraHooker.appClassLoader)
+            .interfaces.first()
 
         CameraMembers.SnapCameraMembers.fMStatusListener = CameraMembers.SnapCameraMembers.cSnapCamera.field {
             type(cSnapStatusListener)
