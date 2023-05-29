@@ -15,5 +15,8 @@ object DexKitHelper {
         const val LONG = "J"
         const val DOUBLE = "D"
         const val STRING = "Ljava/lang/String;"
+        const val URI = "Landroid/net/Uri;"
+        const val LOCATION = "Landroid/location/Location;"
+        const val CameraCharacteristics = "Landroid/hardware/camera2/CameraCharacteristics;"
     }
 }

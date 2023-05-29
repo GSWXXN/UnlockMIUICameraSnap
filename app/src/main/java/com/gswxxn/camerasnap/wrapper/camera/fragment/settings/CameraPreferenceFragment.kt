@@ -4,13 +4,13 @@ import android.app.Activity
 import android.provider.Settings
 import com.gswxxn.camerasnap.constant.Key
 import com.gswxxn.camerasnap.wrapper.camera.CameraSettings
-import com.gswxxn.camerasnap.wrapper.camera.data.DataRepository
 import com.gswxxn.camerasnap.wrapper.preference.PreferenceGroup
 import com.gswxxn.camerasnap.wrapper.camera.ui.PreviewListPreference
 import com.gswxxn.camerasnap.wrapper.camera.R
 import com.highcapable.yukihookapi.hook.factory.current
 import com.highcapable.yukihookapi.hook.type.java.IntType
 
+// 此类下的函数暂未被混淆, 反射名称查找即可, 无需使用DexKit
 class CameraPreferenceFragment(private val instance: Any) {
 
     private val mPreferenceGroup get() = instance.current()
@@ -45,17 +45,17 @@ class CameraPreferenceFragment(private val instance: Any) {
             previewListPreference.setValue(getString(R.string.pref_camera_snap_value_off))
         } else {
             // 获取当前街拍模式的配置文本
-            val currentConfigStr = DataRepository.dataItemGlobal().getString(CameraSettings.KEY_CAMERA_SNAP, null)
+//            val currentConfigStr = DataRepository.dataItemGlobal().getString(CameraSettings.KEY_CAMERA_SNAP, null)
             when {
-                currentConfigStr != null -> {
-                    Settings.Secure.putString(
-                        getActivity().contentResolver,
-                        Key.LONG_PRESS_VOLUME_DOWN,
-                        CameraSettings.getMiuiSettingsKeyForStreetSnap(currentConfigStr)
-                    )
-                    DataRepository.dataItemGlobal().editor().remove(CameraSettings.KEY_CAMERA_SNAP).apply()
-                    previewListPreference.setValue(currentConfigStr)
-                }
+//                currentConfigStr != null -> {
+//                    Settings.Secure.putString(
+//                        getActivity().contentResolver,
+//                        Key.LONG_PRESS_VOLUME_DOWN,
+//                        CameraSettings.getMiuiSettingsKeyForStreetSnap(currentConfigStr)
+//                    )
+//                    DataRepository.dataItemGlobal().editor().remove(CameraSettings.KEY_CAMERA_SNAP).apply()
+//                    previewListPreference.setValue(currentConfigStr)
+//                }
                 currentConfig == Key.LONG_PRESS_VOLUME_DOWN_STREET_SNAP_PICTURE ->
                     previewListPreference.setValue(getString(R.string.pref_camera_snap_value_take_picture))
                 currentConfig == Key.LONG_PRESS_VOLUME_DOWN_STREET_SNAP_MOVIE ->

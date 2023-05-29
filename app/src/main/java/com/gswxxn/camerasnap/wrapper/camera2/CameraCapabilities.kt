@@ -1,15 +1,10 @@
 package com.gswxxn.camerasnap.wrapper.camera2
 
-import com.highcapable.yukihookapi.hook.factory.current
+import com.gswxxn.camerasnap.dexkit.CameraMembers
 
 class CameraCapabilities(private val instance: Any?) {
-    fun getSensorOrientation() = instance?.current()?.method {
-        name = "getSensorOrientation"
-        emptyParam()
-    }!!.invoke<Int>() ?: -1
+    fun getSensorOrientation() = CameraMembers.OtherMembers.mGetSensorOrientation.invoke(instance) as Int
 
-    fun getFacing() = instance?.current()?.method {
-        name = "getFacing"
-        emptyParam()
-    }!!.invoke<Int>() ?: -1
+    fun getFacing() = CameraMembers.OtherMembers.mGetFacing.invoke(instance) as Int
+
 }

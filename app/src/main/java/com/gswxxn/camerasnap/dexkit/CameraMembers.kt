@@ -42,6 +42,31 @@ object CameraMembers {
 
         lateinit var mGetSupportSnap: Method
         lateinit var mGetMiuiSettingsKeyForStreetSnap: Method
+        lateinit var mGetPreferVideoQuality: Method
+    }
+
+    /** 其他被混淆成员的存储类 **/
+    object OtherMembers {
+        // CameraUtils 类中被混淆成员的存储类
+        lateinit var mTrackSnapInfo: Method
+
+        // MediaProviderUtil 类中被混淆成员的存储类
+        lateinit var mGetContentUriFromPath: Method
+
+        // Storage 类中被混淆成员的存储类
+        lateinit var mGetAvailableSpace: Method
+
+        // LocationManager 类中被混淆成员的存储类
+        lateinit var mInstance: Method
+        lateinit var mGetCurrentLocation: Method
+
+        // Util 类中被混淆成员的存储类
+        lateinit var mGetDuration: Method
+
+        // CameraCapabilities 类中被混淆成员的存储类
+        lateinit var mGetSensorOrientation: Method
+        lateinit var mGetFacing: Method
+
     }
 
 }

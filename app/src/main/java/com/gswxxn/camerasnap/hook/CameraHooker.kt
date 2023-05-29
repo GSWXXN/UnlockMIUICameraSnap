@@ -2,6 +2,7 @@ package com.gswxxn.camerasnap.hook
 
 import com.gswxxn.camerasnap.dexkit.camera.CameraSnapMembersFinder
 import com.gswxxn.camerasnap.dexkit.camera.CameraTriggerMembersFinder
+import com.gswxxn.camerasnap.dexkit.camera.OtherMembersFinder
 import com.gswxxn.camerasnap.dexkit.camera.SettingsMembersFinder
 import com.gswxxn.camerasnap.hook.base.BaseHookerWithDexKit
 import com.gswxxn.camerasnap.hook.camera.CameraSnapHooker
@@ -39,6 +40,8 @@ object CameraHooker: BaseHookerWithDexKit() {
         bridge.loadFinder(CameraTriggerMembersFinder)
 
         bridge.loadFinder(SettingsMembersFinder)
+
+        bridge.loadFinder(OtherMembersFinder)
     }
 
     /** 相机 Hook 入口 **/

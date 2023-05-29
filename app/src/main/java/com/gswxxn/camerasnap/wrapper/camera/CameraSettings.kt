@@ -2,25 +2,16 @@ package com.gswxxn.camerasnap.wrapper.camera
 
 import com.gswxxn.camerasnap.constant.Key
 import com.gswxxn.camerasnap.dexkit.CameraMembers
-import com.gswxxn.camerasnap.wrapper.base.StaticClass
-import com.highcapable.yukihookapi.hook.factory.method
-import com.highcapable.yukihookapi.hook.type.java.IntType
+import com.gswxxn.camerasnap.hook.CameraHooker
 
-object CameraSettings: StaticClass() {
-    override val className: String
-        get() = CameraMembers.SettingsMembers.cCameraSettings.name
+object CameraSettings {
 
     const val KEY_CAMERA_SNAP = "pref_camera_snap_key"
 
-    fun getPreferVideoQuality(cameraId: Int, defaultQuality: Int) = clazz.method {
-        name = "getPreferVideoQuality"
-        param(IntType, IntType)
-    }.get().int(cameraId, defaultQuality)
+    fun getPreferVideoQuality(cameraId: Int, moduleIndex: Int) =
+        CameraMembers.SettingsMembers.mGetPreferVideoQuality.invoke(null, cameraId, moduleIndex) as Int
 
-    private fun getString(i: Int) = clazz.method {
-        name = "getString"
-        param(IntType)
-    }.get().string(i)
+    private fun getString(i: Int) = CameraHooker.appContext!!.getString(i)
 
     /**
      * 根据下拉框名称获取对应街拍模式的设置键

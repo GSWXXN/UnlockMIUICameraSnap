@@ -1,20 +1,12 @@
 package com.gswxxn.camerasnap.wrapper.camera.storage
 
-import com.gswxxn.camerasnap.wrapper.base.StaticClass
-import com.highcapable.yukihookapi.hook.factory.field
-import com.highcapable.yukihookapi.hook.factory.method
+import android.os.Environment
+import com.gswxxn.camerasnap.dexkit.CameraMembers
 
-object Storage: StaticClass() {
-    override val className: String
-        get() = "com.android.camera.storage.Storage"
+object Storage {
+    const val LOW_STORAGE_THRESHOLD = 209715200
 
-    val LOW_STORAGE_THRESHOLD = clazz.field { name = "LOW_STORAGE_THRESHOLD" }.get().long()
+    val DIRECTORY = Environment.getExternalStorageDirectory().toString() + "/DCIM/Camera"
 
-    val DIRECTORY = clazz.field { name = "DIRECTORY" }.get().string()
-
-    fun getAvailableSpace() = clazz.method {
-        name = "getAvailableSpace"
-        emptyParam()
-    }.get().long()
-
+    fun getAvailableSpace() = CameraMembers.OtherMembers.mGetAvailableSpace.invoke(null) as Long
 }

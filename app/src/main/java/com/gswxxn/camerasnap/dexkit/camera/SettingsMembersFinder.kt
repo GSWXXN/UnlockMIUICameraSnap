@@ -44,6 +44,9 @@ object SettingsMembersFinder: BaseFinder() {
             addQuery("CameraSettings", arrayOf("filterByConfig: isSupportVideoFrontMirror = "))
             matchType = MatchType.FULL
         }
+        val batchFindMethodsUsingStringsResultMap = bridge.batchFindMethodsUsingStrings {
+            addQuery("initCamera", arrayOf("initCamera: "))
+        }
 
         // 混淆前类名 com.android.camera.CameraSettings
         CameraMembers.SettingsMembers.cCameraSettings = batchFindClassesUsingStringsResultMap["CameraSettings"]!!.first().name.toClass()
@@ -60,6 +63,18 @@ object SettingsMembersFinder: BaseFinder() {
 
             beInvokedMethodReturnType = DexKitHelper.TypeSignature.BOOLEAN
             beInvokedMethodParameterTypes = arrayOf()
+        }
+
+        val initCameraDescriptor = batchFindMethodsUsingStringsResultMap["initCamera"]!!.first {
+            it.parameterTypesSig == "" && it.returnTypeSig == DexKitHelper.TypeSignature.VOID
+        }
+        val cameraSettingsClassDescriptor = batchFindClassesUsingStringsResultMap["CameraSettings"]!!.first()
+        CameraMembers.SettingsMembers.mGetPreferVideoQuality = bridge.uniqueFindMethodInvoking {
+            methodDescriptor = initCameraDescriptor.descriptor
+
+            beInvokedMethodDeclareClass = cameraSettingsClassDescriptor.name
+            beInvokedMethodParameterTypes = arrayOf(DexKitHelper.TypeSignature.INT, DexKitHelper.TypeSignature.INT)
+            beInvokedMethodReturnType = DexKitHelper.TypeSignature.INT
         }
     }
 
