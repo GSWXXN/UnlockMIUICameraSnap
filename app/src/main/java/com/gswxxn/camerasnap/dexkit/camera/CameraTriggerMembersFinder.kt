@@ -31,8 +31,8 @@ object CameraTriggerMembersFinder: BaseFinder() {
         CameraMembers.SnapTriggerMembers.cSnapTrigger = "com.android.camera.snap.SnapTrigger".toClass(CameraHooker.appClassLoader)
 
         CameraMembers.SnapTriggerMembers.mVibrator = CameraMembers.SnapTriggerMembers.cSnapTrigger.method {
-            name = "vibratorShort"
-            emptyParam()
+            name = "vibrator"
+            paramCount(1)
         }.give()!!
 
         CameraMembers.SnapTriggerMembers.mShouldQuitSnap = CameraMembers.SnapTriggerMembers.cSnapTrigger.method {

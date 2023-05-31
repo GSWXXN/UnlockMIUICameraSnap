@@ -39,11 +39,13 @@ import java.util.Locale
 class SnapCamera(val instance: Any?) {
 
     companion object: StaticClass() {
+        // TODO: 移除 StaticClass()
         override val className: String get() = CameraMembers.SnapCameraMembers.cSnapCamera.name
         private val wrappers = mutableMapOf<Any?, SnapCamera>()
 
         const val SUFFIX = "_SNAP"
 
+        // TODO: 移除 getWrapper()
         fun getWrapper(instance: Any?) = wrappers.getOrPut(instance) { SnapCamera(instance) }
         fun removeWrapper(instance: Any?) = wrappers.remove(instance)
     }

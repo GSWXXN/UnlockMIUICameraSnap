@@ -18,6 +18,8 @@ import com.gswxxn.camerasnap.hook.base.BaseHookerWithDexKit
  * @property bridge [DexKitBridge] 在不要要手动赋值, 调用 DexKitBridge.loadFinder 时会自动被赋值
  */
 abstract class BaseFinder {
+    // TODO: 将批量查找使用指定字符串方法/类的结果静态化
+    // TODO: 将 addQuery 的字符串参数申明为常量
     lateinit var bridge: DexKitBridge
 
     abstract fun onFindMembers()
