@@ -19,7 +19,6 @@ import android.os.Process
 import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.gswxxn.camerasnap.utils.ReflectUtils.setValue
 import com.gswxxn.camerasnap.wrapper.camera.storage.Storage.getAvailableSpace
-import com.gswxxn.camerasnap.wrapper.base.StaticClass
 import com.gswxxn.camerasnap.wrapper.camera.CameraSettings
 import com.gswxxn.camerasnap.wrapper.camera.LocationManager
 import com.gswxxn.camerasnap.wrapper.camera.Util
@@ -38,16 +37,8 @@ import java.util.Locale
 
 class SnapCamera(val instance: Any?) {
 
-    companion object: StaticClass() {
-        // TODO: 移除 StaticClass()
-        override val className: String get() = CameraMembers.SnapCameraMembers.cSnapCamera.name
-        private val wrappers = mutableMapOf<Any?, SnapCamera>()
-
+    companion object {
         const val SUFFIX = "_SNAP"
-
-        // TODO: 移除 getWrapper()
-        fun getWrapper(instance: Any?) = wrappers.getOrPut(instance) { SnapCamera(instance) }
-        fun removeWrapper(instance: Any?) = wrappers.remove(instance)
     }
 
     class SnapStatusListener(private val instance: Any) {
