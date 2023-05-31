@@ -3,11 +3,11 @@ package com.gswxxn.camerasnap.dexkit.camera
 import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.gswxxn.camerasnap.dexkit.base.BaseFinder
 import com.gswxxn.camerasnap.hook.CameraHooker
-import com.gswxxn.camerasnap.hook.CameraHooker.getMethodInstance
-import com.gswxxn.camerasnap.hook.CameraHooker.uniqueFindMethodCalling
-import com.gswxxn.camerasnap.hook.CameraHooker.uniqueFindMethodInvoking
-import com.gswxxn.camerasnap.hook.CameraHooker.uniqueFindMethodUsingField
+import com.gswxxn.camerasnap.utils.DexKitHelper.getMethodInstance
 import com.gswxxn.camerasnap.utils.DexKitHelper
+import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodCalling
+import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodInvoking
+import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodUsingField
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.factory.toClass
 import io.luckypray.dexkit.enums.MatchType
@@ -28,12 +28,12 @@ object OtherMembersFinder: BaseFinder() {
             addQuery("CameraCapabilities", arrayOf("Screen light brightness: "))
         }
 
-        val mSnapRunnable_runDescriptor = batchFindMethodsUsingStringsResultMap["mSnapRunnable_run"]!!.first {
+        val runDescriptor = batchFindMethodsUsingStringsResultMap["mSnapRunnable_run"]!!.first {
             it.parameterTypesSig == "" && it.returnTypeSig == DexKitHelper.TypeSignature.VOID
         }
 
         CameraMembers.OtherMembers.mTrackSnapInfo = bridge.uniqueFindMethodInvoking {
-            methodDescriptor = mSnapRunnable_runDescriptor.descriptor
+            methodDescriptor = runDescriptor.descriptor
 
             beInvokedMethodParameterTypes = arrayOf(
                 DexKitHelper.TypeSignature.BOOLEAN
@@ -46,7 +46,7 @@ object OtherMembersFinder: BaseFinder() {
         }.getMethodInstance()
 
         CameraMembers.OtherMembers.mGetAvailableSpace = bridge.uniqueFindMethodInvoking {
-            methodDescriptor = mSnapRunnable_runDescriptor.descriptor
+            methodDescriptor = runDescriptor.descriptor
 
             beInvokedMethodParameterTypes = arrayOf()
             beInvokedMethodReturnType = DexKitHelper.TypeSignature.LONG

@@ -8,6 +8,7 @@ import com.gswxxn.camerasnap.hook.base.BaseHookerWithDexKit
 import com.gswxxn.camerasnap.hook.camera.CameraSnapHooker
 import com.gswxxn.camerasnap.hook.camera.CameraTriggerHooker
 import com.gswxxn.camerasnap.hook.camera.SettingsHooker
+import com.gswxxn.camerasnap.utils.DexKitHelper.loadFinder
 import com.highcapable.yukihookapi.hook.factory.constructor
 import com.highcapable.yukihookapi.hook.factory.current
 import com.highcapable.yukihookapi.hook.log.loggerI

@@ -3,8 +3,8 @@ package com.gswxxn.camerasnap.dexkit.camera
 import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.gswxxn.camerasnap.dexkit.base.BaseFinder
 import com.gswxxn.camerasnap.hook.CameraHooker
-import com.gswxxn.camerasnap.hook.CameraHooker.getMethodInstance
 import com.gswxxn.camerasnap.utils.DexKitHelper
+import com.gswxxn.camerasnap.utils.DexKitHelper.getMethodInstance
 import com.highcapable.yukihookapi.hook.factory.field
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.factory.toClass
