@@ -82,10 +82,16 @@ object CameraTriggerMembersFinder: BaseFinder() {
     }
 
     private fun findFields() {
+        val batchFindClassesUsingStringsResultMap = bridge.batchFindClassesUsingStrings {
+            addQuery("SnapCamera", arrayOf("takeSnap: CameraDevice is opening or was already closed."))
+            matchType = MatchType.CONTAINS
+        }
+
         val snapTriggerClass = CameraMembers.SnapTriggerMembers.cSnapTrigger
+        val snapCameraClass = batchFindClassesUsingStringsResultMap["SnapCamera"]!!.first().name.toClass(CameraHooker.appClassLoader)
 
         CameraMembers.SnapTriggerMembers.fMPowerManager = snapTriggerClass.field { type = PowerManagerClass }.give()!!
         CameraMembers.SnapTriggerMembers.fMHandler = snapTriggerClass.field { type = HandlerClass }.give()!!
-        CameraMembers.SnapTriggerMembers.fMCamera = snapTriggerClass.field { type = CameraMembers.SnapCameraMembers.cSnapCamera }.give()!!
+        CameraMembers.SnapTriggerMembers.fMCamera = snapTriggerClass.field { type = snapCameraClass }.give()!!
     }
 }
