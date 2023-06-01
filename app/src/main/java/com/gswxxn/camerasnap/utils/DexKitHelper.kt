@@ -1,6 +1,5 @@
 package com.gswxxn.camerasnap.utils
 
-import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.gswxxn.camerasnap.dexkit.base.BaseFinder
 import com.gswxxn.camerasnap.hook.CameraHooker
 import io.luckypray.dexkit.DexKitBridge
@@ -33,7 +32,17 @@ object DexKitHelper {
     }
 
     /**
-     * 通过 [DexMethodDescriptor] 获取方法实例, 传入参数默认为 [appClassLoader]
+     * 加载 Finder, 将 DexKitBridge 实例传递给 Finder, 并调用 onFindMembers 方法
+     *
+     * @param finder 被操作的 Finder
+     */
+    fun DexKitBridge.loadFinder(finder: BaseFinder) {
+        finder.bridge = this
+        finder.onFindMembers()
+    }
+
+    /**
+     * 通过 [DexMethodDescriptor] 获取方法实例, 传入参数默认为 [CameraHooker.appClassLoader]
      *
      * @return [Method]
      */
@@ -72,7 +81,14 @@ object DexKitHelper {
         val callingList = findMethodCaller(builder)
         val flatMap = callingList.flatMap { it.value }
 
-        require(flatMap.size == 1) { "uniqueFindMethodCalling() Error: callingList must contain exactly one item; Data: $callingList" }
+        require(flatMap.size == 1) {
+            var builderInfo = ""
+            builder.javaClass.declaredFields.forEach {
+                it.isAccessible = true
+                builderInfo += ("${it.name}: ${it.get(builder)}\n")
+            }
+            "uniqueFindMethodCalling() Error: callingList must contain exactly one item; Data: $callingList  \n Builder: $builderInfo"
+        }
 
         return flatMap.first().getMethodInstance()
     }
@@ -86,19 +102,16 @@ object DexKitHelper {
     fun DexKitBridge.uniqueFindMethodUsingField(builder: MethodUsingFieldArgs.Builder.() -> Unit): Method {
         val usingList = findMethodUsingField(builder).keys
 
-        require(usingList.size == 1) { "uniqueFindMethodUsingField() Error: UsingList must contain exactly one item; Data: $usingList" }
+        require(usingList.size == 1) {
+            var builderInfo = ""
+            builder.javaClass.declaredFields.forEach {
+                it.isAccessible = true
+                builderInfo += ("${it.name}: ${it.get(builder)}\n")
+            }
+            "uniqueFindMethodUsingField() Error: UsingList must contain exactly one item; Data: $usingList \n Builder: $builderInfo"
+        }
 
         return usingList.first().getMethodInstance()
-    }
-
-    /**
-     * 加载 Finder, 将 DexKitBridge 实例传递给 Finder, 并调用 onFindMembers 方法
-     *
-     * @param finder 被操作的 Finder
-     */
-    fun DexKitBridge.loadFinder(finder: BaseFinder) {
-        finder.bridge = this
-        finder.onFindMembers()
     }
 
     /**
