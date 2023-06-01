@@ -1,8 +1,8 @@
 package com.gswxxn.camerasnap.hook.camera
 
 import com.gswxxn.camerasnap.dexkit.CameraMembers
-import com.gswxxn.camerasnap.hook.CameraHooker.methodHook
 import com.gswxxn.camerasnap.hook.CameraHooker.onFindMembers
+import com.gswxxn.camerasnap.utils.ReflectUtils.methodHook
 import com.gswxxn.camerasnap.wrapper.camera.CameraSettings
 import com.gswxxn.camerasnap.wrapper.camera.R
 import com.gswxxn.camerasnap.wrapper.camera.fragment.settings.CameraPreferenceFragment

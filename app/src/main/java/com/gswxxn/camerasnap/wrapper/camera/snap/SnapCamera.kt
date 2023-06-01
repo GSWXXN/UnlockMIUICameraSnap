@@ -39,6 +39,10 @@ class SnapCamera(val instance: Any?) {
 
     companion object {
         const val SUFFIX = "_SNAP"
+
+        private val wrappers = mutableMapOf<Any?, SnapCamera>()
+        fun getWrapper(instance: Any?) = wrappers.getOrPut(instance) { SnapCamera(instance) }
+        fun removeWrapper(instance: Any?) = wrappers.remove(instance)
     }
 
     class SnapStatusListener(private val instance: Any) {

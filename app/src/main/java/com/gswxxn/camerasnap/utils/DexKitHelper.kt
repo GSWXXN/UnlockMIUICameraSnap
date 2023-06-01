@@ -32,13 +32,13 @@ object DexKitHelper {
     }
 
     /**
-     * 加载 Finder, 将 DexKitBridge 实例传递给 Finder, 并调用 onFindMembers 方法
+     * 加载 Finder, 将 DexKitBridge 实例传递给 Finder
      *
      * @param finder 被操作的 Finder
      */
     fun DexKitBridge.loadFinder(finder: BaseFinder) {
         finder.bridge = this
-        finder.onFindMembers()
+        BaseFinder.finders += finder
     }
 
     /**

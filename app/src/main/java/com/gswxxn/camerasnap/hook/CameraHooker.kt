@@ -9,28 +9,13 @@ import com.gswxxn.camerasnap.hook.camera.CameraSnapHooker
 import com.gswxxn.camerasnap.hook.camera.CameraTriggerHooker
 import com.gswxxn.camerasnap.hook.camera.SettingsHooker
 import com.gswxxn.camerasnap.utils.DexKitHelper.loadFinder
-import com.highcapable.yukihookapi.hook.factory.constructor
-import com.highcapable.yukihookapi.hook.factory.current
-import com.highcapable.yukihookapi.hook.log.loggerI
-import com.highcapable.yukihookapi.hook.type.java.FileClass
-import com.highcapable.yukihookapi.hook.type.java.IntType
+import com.gswxxn.camerasnap.utils.ReflectUtils.getVersionCode
 import io.luckypray.dexkit.DexKitBridge
-import java.io.File
-
 
 /** 相机 Hooker**/
 object CameraHooker: BaseHookerWithDexKit() {
-    // TODO: 移除版本判断, 全部使用 Dexkit 查找成员, 并且保存查找结果
-    val versionCode by lazy {
-        val pkg = "android.content.pm.PackageParser".toClass()
-            .constructor { emptyParam() }.get().call()!!.current()
-            .method { name = "parsePackage"; param(FileClass, IntType) }
-            .call(File(appInfo.sourceDir), 0)!!
-
-        pkg.current().field { name = "mVersionCode" }.int().apply {
-            loggerI(msg = "camera version code: $this")
-        }
-    }
+    // TODO: 移除版本判断, 全部使用 DexKit 查找成员, 并且保存查找结果
+    val versionCode by lazy { appInfo.getVersionCode() }
 
     /** 开始查找混淆成员 **/
     override fun onFindMembers(bridge: DexKitBridge) {

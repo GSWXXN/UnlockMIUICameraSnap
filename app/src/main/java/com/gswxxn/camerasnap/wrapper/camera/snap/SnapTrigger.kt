@@ -12,7 +12,7 @@ class SnapTrigger(private val instance: Any) {
         const val MAX_VIDEO_DURATION = 3600000
     }
 
-    val mCamera get() = SnapCamera(CameraMembers.SnapTriggerMembers.fMCamera.get(instance))
+    val mCamera get() = SnapCamera.getWrapper(CameraMembers.SnapTriggerMembers.fMCamera.get(instance))
     val mPowerManager get() = CameraMembers.SnapTriggerMembers.fMPowerManager.get(instance) as PowerManager?
     private val mHandler get() = CameraMembers.SnapTriggerMembers.fMHandler.get(instance) as Handler?
 

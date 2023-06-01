@@ -19,7 +19,7 @@ object CameraSnapHooker: YukiBaseHooker() {
             injectMember {
                 members(CameraMembers.SnapCameraMembers.mInitSnapType)
                 replaceUnit {
-                    val snapCamera = SnapCamera(instance)
+                    val snapCamera = SnapCamera.getWrapper(instance)
 
                     val snapType = Settings.Secure.getString(
                         snapCamera.mContext.contentResolver,
@@ -47,8 +47,8 @@ object CameraSnapHooker: YukiBaseHooker() {
                 beforeHook {
                     try {
                         loggerW(msg = "stopCamcorder: release")
-                        SnapCamera(instance).stopCamcorder()
-                    } catch (e: Exception) {
+                        SnapCamera.getWrapper(instance).stopCamcorder()
+                        SnapCamera.removeWrapper(instance)                    } catch (e: Exception) {
                         loggerE(msg = "release: ${e.message}", e = e)
                     }
                 }
