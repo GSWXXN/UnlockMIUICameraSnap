@@ -204,8 +204,8 @@ object DexKitHelper {
                 val instance = try {
                      when (field.type) {
                         JavaClass -> DexClassDescriptor(value).getClassInstance(appClassLoader)
-                        JavaMethodClass -> DexMethodDescriptor(value).getMethodInstance(appClassLoader)
-                        JavaFieldClass -> DexFieldDescriptor(value).getFieldInstance(appClassLoader)
+                        JavaMethodClass -> DexMethodDescriptor(value).getMethodInstance(appClassLoader).apply { isAccessible = true }
+                        JavaFieldClass -> DexFieldDescriptor(value).getFieldInstance(appClassLoader).apply { isAccessible = true }
                         else -> null
                     }
                 } catch (e: ReflectiveOperationException) {
