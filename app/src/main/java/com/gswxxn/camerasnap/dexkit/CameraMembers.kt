@@ -5,6 +5,8 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 /** 相机被混淆成员的存储类 **/
+// TODO: 在 proguard-rules.pro 中申明规则, 而不是使用 @keep
+@Keep
 object CameraMembers {
     /** SnapTrigger 类中被混淆成员的存储类 **/
     @Keep
