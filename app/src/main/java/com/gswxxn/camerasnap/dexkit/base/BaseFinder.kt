@@ -28,6 +28,8 @@ abstract class BaseFinder {
         lateinit var batchFindMethodsUsingStringsResultMap: Map<String, List<DexMethodDescriptor>>
 
         fun DexKitBridge.onFinishLoadFinder() {
+            if (finders.isEmpty()) return
+
             batchFindClassesUsingStringsResultMap = batchFindClassesUsingStrings {
                 matchType = MatchType.FULL
                 finders.forEach { apply(it.prepareBatchFindClassesUsingStrings()) }

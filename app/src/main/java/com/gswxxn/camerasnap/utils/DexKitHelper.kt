@@ -1,11 +1,18 @@
 package com.gswxxn.camerasnap.utils
 
+import android.content.Context
 import com.gswxxn.camerasnap.dexkit.base.BaseFinder
 import com.gswxxn.camerasnap.hook.CameraHooker
+import com.gswxxn.camerasnap.hook.base.BaseHookerWithDexKit
+import com.highcapable.yukihookapi.hook.log.loggerE
+import com.highcapable.yukihookapi.hook.type.java.JavaClass
+import com.highcapable.yukihookapi.hook.type.java.JavaFieldClass
+import com.highcapable.yukihookapi.hook.type.java.JavaMethodClass
 import io.luckypray.dexkit.DexKitBridge
 import io.luckypray.dexkit.builder.MethodCallerArgs
 import io.luckypray.dexkit.builder.MethodInvokingArgs
 import io.luckypray.dexkit.builder.MethodUsingFieldArgs
+import io.luckypray.dexkit.descriptor.member.DexClassDescriptor
 import io.luckypray.dexkit.descriptor.member.DexFieldDescriptor
 import io.luckypray.dexkit.descriptor.member.DexMethodDescriptor
 import java.lang.reflect.Field
@@ -137,5 +144,78 @@ object DexKitHelper {
             "findFieldUsingByMethod: result.size != 1, method: ${method.declaringClass} -> ${method.name}(), result: ${result.size}"
         }
         return result[0].apply { isAccessible = true }
+    }
+
+    /**
+     * 将对象的成员信息存储到 SharedPreferences 中
+     *
+     * @param context 上下文对象，用于获取 SharedPreferences
+     * @param obj 被存储的对象
+     */
+    fun BaseHookerWithDexKit.storeMembers(context: Context, obj: Any) {
+        context.getSharedPreferences("unlock_miui_camera_snap_anti_obfuscation", Context.MODE_PRIVATE).edit().apply {
+            appVersionCode?.let { putInt("version_code", it) }
+            appVersionName?.let { putString("version_name", appVersionName) }
+
+            obj.javaClass.declaredClasses.forEach { clazz ->
+                val className = clazz.simpleName
+                clazz.declaredFields.forEach { field ->
+                    val key = "${className}_${field.name}"
+                    val value = when (field.type) {
+                        JavaClass -> DexClassDescriptor(field.get(null) as Class<*>).descriptor
+                        JavaMethodClass -> DexMethodDescriptor(field.get(null) as Method).descriptor
+                        JavaFieldClass -> DexFieldDescriptor(field.get(null) as Field).descriptor
+                        else -> null
+                    }
+                    value?.let { putString(key, it) }
+                }
+            }
+        }.apply()
+    }
+
+    /**
+     * 从 SharedPreferences 中读取对象的成员信息
+     *
+     * @param context 上下文对象，用于获取 SharedPreferences
+     * @param obj 被存储的对象
+     * @return 是否成功读取
+     */
+    fun BaseHookerWithDexKit.loadMembers(context: Context, obj: Any): Boolean {
+        val pref = context.getSharedPreferences("unlock_miui_camera_snap_anti_obfuscation", Context.MODE_PRIVATE)
+
+        val isVersionSame = pref.getInt("version_code", 0) == appVersionCode &&
+                pref.getString("version_name", "") == appVersionName
+
+        if (!isVersionSame) return false
+
+        obj.javaClass.declaredClasses.forEach { clazz ->
+            val className = clazz.simpleName
+            for (field in clazz.declaredFields) {
+                val key = "${className}_${field.name}"
+                val value = pref.getString(key, "")!!
+
+                if (field.type !in arrayOf(JavaClass, JavaMethodClass, JavaFieldClass)) continue
+
+                if (value.isEmpty()) {
+                    loggerE(msg = "failed to load ${key}, pref empty")
+                    return false
+                }
+
+                val instance = try {
+                     when (field.type) {
+                        JavaClass -> DexClassDescriptor(value).getClassInstance(appClassLoader)
+                        JavaMethodClass -> DexMethodDescriptor(value).getMethodInstance(appClassLoader)
+                        JavaFieldClass -> DexFieldDescriptor(value).getFieldInstance(appClassLoader)
+                        else -> null
+                    }
+                } catch (e: ReflectiveOperationException) {
+                    loggerE(msg = "failed to load ${key}, no such members", e = e)
+                    return false
+                }
+
+                field.set(null, instance)
+            }
+        }
+        return true
     }
 }

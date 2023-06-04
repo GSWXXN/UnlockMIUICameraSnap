@@ -7,9 +7,14 @@ import com.gswxxn.camerasnap.hook.CameraHooker
 import com.gswxxn.camerasnap.utils.DexKitHelper.getMethodInstance
 import com.gswxxn.camerasnap.utils.DexKitHelper
 import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodInvoking
+import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.factory.toClass
+import com.highcapable.yukihookapi.hook.type.java.BooleanType
+import com.highcapable.yukihookapi.hook.type.java.IntType
 import io.luckypray.dexkit.annotations.DexKitExperimentalApi
 import io.luckypray.dexkit.builder.BatchFindArgs
+import io.luckypray.dexkit.descriptor.member.DexMethodDescriptor
+import java.lang.Exception
 
 /** 配置及设置项被混淆成员的 Finder **/
 object SettingsMembersFinder: BaseFinder() {
@@ -29,10 +34,16 @@ object SettingsMembersFinder: BaseFinder() {
         // 混淆前类名 com.android.camera.CameraSettings
         CameraMembers.SettingsMembers.cCameraSettings = batchFindClassesUsingStringsResultMap[CameraQueryKey.CameraSettings]!!.first().name.toClass(CameraHooker.appClassLoader)
 
-
-        val getCameraSnapSettingNeedDescriptor = bridge.findMethodUsingAnnotation {
-            annotationUsingString = "isSupportedQuickSnap"
-        }.first { it.parameterTypesSig == DexKitHelper.TypeSignature.INT + DexKitHelper.TypeSignature.BOOLEAN }
+        val getCameraSnapSettingNeedDescriptor = try {
+            bridge.findMethodUsingAnnotation {
+                annotationUsingString = "isSupportedQuickSnap"
+            }.first { it.parameterTypesSig == DexKitHelper.TypeSignature.INT + DexKitHelper.TypeSignature.BOOLEAN }
+        } catch (e: Exception) {
+            "com.android.camera.CameraSettings".toClass(CameraHooker.appClassLoader).method {
+                name = "getCameraSnapSettingNeed"
+                param(IntType, BooleanType)
+            }.give()!!.let { DexMethodDescriptor(it) }
+        }
 
         CameraMembers.SettingsMembers.mGetSupportSnap = bridge.uniqueFindMethodInvoking {
             methodDeclareClass = getCameraSnapSettingNeedDescriptor.declaringClassName

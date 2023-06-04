@@ -1,6 +1,7 @@
 package com.gswxxn.camerasnap.utils
 
 import android.content.pm.ApplicationInfo
+import android.content.pm.PackageParser
 import com.gswxxn.camerasnap.hook.CameraHooker.hook
 import com.gswxxn.camerasnap.hook.CameraHooker.toClass
 import com.highcapable.yukihookapi.hook.core.YukiMemberHookCreator
@@ -24,18 +25,14 @@ object ReflectUtils {
         this.set(obj, value)
     }
 
-    /** 通过获取应用版本号
+    /** 通过 ApplicationInfo 获取 PackageParser.Package
      *
-     * @return 版本号
+     * @return PackageParser.Package
      **/
-    fun ApplicationInfo.getVersionCode(): Int {
-        val pkg = "android.content.pm.PackageParser".toClass()
-            .constructor { emptyParam() }.get().call()!!.current()
-            .method { name = "parsePackage"; param(FileClass, IntType) }
-            .call(File(sourceDir), 0)!!
-
-        return pkg.current().field { name = "mVersionCode" }.int()
-    }
+    fun ApplicationInfo.getPackage() = "android.content.pm.PackageParser".toClass()
+        .constructor { emptyParam() }.get().call()!!.current()
+        .method { name = "parsePackage"; param(FileClass, IntType) }
+        .invoke<PackageParser.Package>(File(sourceDir), 0)!!
 
     /**
      * 对给定 [Method] 执行 Hook

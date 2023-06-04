@@ -1,11 +1,13 @@
 package com.gswxxn.camerasnap.dexkit
 
+import androidx.annotation.Keep
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 /** 相机被混淆成员的存储类 **/
 object CameraMembers {
     /** SnapTrigger 类中被混淆成员的存储类 **/
+    @Keep
     object SnapTriggerMembers {
         lateinit var cSnapTrigger: Class<*>
 
@@ -19,6 +21,7 @@ object CameraMembers {
     }
 
     /** SnapService 类中被混淆成员的存储类 **/
+    @Keep
     object SnapCameraMembers {
         lateinit var cSnapCamera: Class<*>
 
@@ -37,6 +40,7 @@ object CameraMembers {
     }
 
     /** 相机配置及设置项中被混淆成员的存储类 **/
+    @Keep
     object SettingsMembers {
         lateinit var cCameraSettings: Class<*>
 
@@ -46,6 +50,7 @@ object CameraMembers {
     }
 
     /** 其他被混淆成员的存储类 **/
+    @Keep
     object OtherMembers {
         // CameraUtils 类中被混淆成员的存储类
         lateinit var mTrackSnapInfo: Method
