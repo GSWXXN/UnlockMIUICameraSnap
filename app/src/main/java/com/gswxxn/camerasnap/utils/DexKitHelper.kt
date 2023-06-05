@@ -1,6 +1,7 @@
 package com.gswxxn.camerasnap.utils
 
 import android.content.Context
+import com.gswxxn.camerasnap.BuildConfig
 import com.gswxxn.camerasnap.dexkit.base.BaseFinder
 import com.gswxxn.camerasnap.hook.CameraHooker
 import com.gswxxn.camerasnap.hook.base.BaseHookerWithDexKit
@@ -154,8 +155,12 @@ object DexKitHelper {
      */
     fun BaseHookerWithDexKit.storeMembers(context: Context, obj: Any) {
         context.getSharedPreferences("unlock_miui_camera_snap_anti_obfuscation", Context.MODE_PRIVATE).edit().apply {
-            appVersionCode?.let { putInt("version_code", it) }
-            appVersionName?.let { putString("version_name", appVersionName) }
+            clear()
+
+            appVersionCode?.let { putInt("app_version_code", it) }
+            appVersionName?.let { putString("app_version_name", appVersionName) }
+            putString("module_version_name", BuildConfig.VERSION_NAME)
+            putInt("module_version_code", BuildConfig.VERSION_CODE)
 
             obj.javaClass.declaredClasses.forEach { clazz ->
                 val className = clazz.simpleName
@@ -184,7 +189,9 @@ object DexKitHelper {
         val pref = context.getSharedPreferences("unlock_miui_camera_snap_anti_obfuscation", Context.MODE_PRIVATE)
 
         val isVersionSame = pref.getInt("version_code", 0) == appVersionCode &&
-                pref.getString("version_name", "") == appVersionName
+                pref.getString("app_version_name", "") == appVersionName &&
+                pref.getString("app_module_version_name", "") == BuildConfig.VERSION_NAME &&
+                pref.getInt("module_version_code", 0) == BuildConfig.VERSION_CODE
 
         if (!isVersionSame) return false
 
