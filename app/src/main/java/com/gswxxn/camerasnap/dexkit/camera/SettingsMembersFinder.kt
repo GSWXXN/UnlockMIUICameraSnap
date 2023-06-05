@@ -8,14 +8,16 @@ import com.gswxxn.camerasnap.utils.DexKitHelper.getMethodInstance
 import com.gswxxn.camerasnap.utils.DexKitHelper
 import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodInvoking
 import com.highcapable.yukihookapi.hook.factory.toClass
+import com.highcapable.yukihookapi.hook.log.loggerE
 import io.luckypray.dexkit.builder.BatchFindArgs
+import java.lang.reflect.Method
 
 /** 配置及设置项被混淆成员的 Finder **/
 object SettingsMembersFinder: BaseFinder() {
 
     override fun prepareBatchFindClassesUsingStrings(): BatchFindArgs.Builder.() -> Unit = {
         addQuery(CameraQueryKey.CameraSettings, arrayOf("filterByConfig: isSupportVideoFrontMirror = "))
-        addQuery(CameraQueryKey.DataItemFeature, arrayOf("ro.boot.camera.config", "_pro"))
+        addQuery(CameraQueryKey.DataItemFeature, arrayOf("ro.boot.camera.config"))
     }
 
     override fun prepareBatchFindMethodsUsingStrings(): BatchFindArgs.Builder.() -> Unit = {
@@ -29,16 +31,29 @@ object SettingsMembersFinder: BaseFinder() {
         // 混淆前类名 com.android.camera.CameraSettings
         CameraMembers.SettingsMembers.cCameraSettings = batchFindClassesUsingStringsResultMap[CameraQueryKey.CameraSettings]!!.first().name.toClass(CameraHooker.appClassLoader)
 
-        val dataItemFeatureClassDescriptor = batchFindClassesUsingStringsResultMap[CameraQueryKey.DataItemFeature]!!.first()
+        val dataItemFeatureClassDescriptors = batchFindClassesUsingStringsResultMap[CameraQueryKey.DataItemFeature]!!
         val snapKeyReceiverOnReceiveDescriptor = batchFindMethodsUsingStringsResultMap[CameraQueryKey.SnapKeyReceiver_onReceive]!!.first {
             it.returnTypeSig == DexKitHelper.TypeSignature.VOID
         }
-        CameraMembers.SettingsMembers.mGetSupportSnap = bridge.uniqueFindMethodInvoking {
-            methodDescriptor = snapKeyReceiverOnReceiveDescriptor.descriptor
+        var mGetSupportSnap:Method? = null
+        for (dataItemFeatureClassDescriptor in dataItemFeatureClassDescriptors) {
+            try {
+                mGetSupportSnap = bridge.uniqueFindMethodInvoking {
+                    methodDescriptor = snapKeyReceiverOnReceiveDescriptor.descriptor
 
-            beInvokedMethodDeclareClass = dataItemFeatureClassDescriptor.name
-            beInvokedMethodReturnType = DexKitHelper.TypeSignature.BOOLEAN
-            beInvokedMethodParameterTypes = arrayOf()
+                    beInvokedMethodDeclareClass = dataItemFeatureClassDescriptor.name
+                    beInvokedMethodReturnType = DexKitHelper.TypeSignature.BOOLEAN
+                    beInvokedMethodParameterTypes = arrayOf()
+                }
+                break
+            } catch (e: Exception) {
+                // ignore
+            }
+        }
+        if (mGetSupportSnap != null) {
+            CameraMembers.SettingsMembers.mGetSupportSnap = mGetSupportSnap
+        } else {
+            loggerE(msg = "not found mGetSupportSnap!!!")
         }
 
         val getQualityDescriptor = batchFindMethodsUsingStringsResultMap[CameraQueryKey.UserRecordSetting_getQuality]!!.first {
