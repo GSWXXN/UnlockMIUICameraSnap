@@ -8,6 +8,7 @@ object CameraQueryKey {
     const val PictureInfo = "PictureInfo"
     const val LocationManager = "LocationManager"
     const val CameraSettings = "CameraSetting"
+    const val DataItemFeature = "DataItemFeature"
 
     // methods
     const val SnapTrigger_onCameraOpened = "SnapTrigger_onCameraOpened"
@@ -20,6 +21,8 @@ object CameraQueryKey {
     const val SnapCamera_release = "SnapCamera_release"
     const val SnapCamera_onPictureTaken = "SnapCamera_onPictureTaken"
     const val SnapCamera_initCamera = "SnapCamera_initCamera"
+
+    const val SnapKeyReceiver_onReceive = "SnapKeyReceiver_onReceive"
 
     const val MediaProviderUtil_getContentUriFromPath = "MediaProviderUtil_getContentUriFromPath"
 
