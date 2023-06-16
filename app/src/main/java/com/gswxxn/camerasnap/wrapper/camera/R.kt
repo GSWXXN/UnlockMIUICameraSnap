@@ -1,30 +1,30 @@
 package com.gswxxn.camerasnap.wrapper.camera
 
-import com.gswxxn.camerasnap.wrapper.base.StaticClass
-import com.highcapable.yukihookapi.hook.factory.field
+import android.annotation.SuppressLint
+import com.gswxxn.camerasnap.hook.CameraHooker
 
 object R {
-    object string: StaticClass() {
-        override val className: String
-            get() = "com.android.camera.R\$string"
+    object string {
 
-        val pref_camera_snap_default = clazz.field { name = "pref_camera_snap_default" }.get().int()
+        val pref_camera_snap_default = getID("string", "pref_camera_snap_default")
 
-        val pref_camera_snap_enable_title = clazz.field { name = "pref_camera_snap_enable_title" }.get().int()
+        val pref_camera_snap_enable_title = getID("string", "pref_camera_snap_enable_title")
 
-        val pref_camera_snap_value_off = clazz.field { name = "pref_camera_snap_value_off" }.get().int()
+        val pref_camera_snap_value_off = getID("string", "pref_camera_snap_value_off")
 
-        val pref_camera_snap_value_take_picture = clazz.field { name = "pref_camera_snap_value_take_picture" }.get().int()
+        val pref_camera_snap_value_take_picture = getID("string", "pref_camera_snap_value_take_picture")
 
-        val pref_camera_snap_value_take_movie = clazz.field { name = "pref_camera_snap_value_take_movie" }.get().int()
+        val pref_camera_snap_value_take_movie = getID("string", "pref_camera_snap_value_take_movie")
     }
 
-    object array: StaticClass() {
-        override val className: String
-            get() = "com.android.camera.R\$array"
+    object array {
 
-        val pref_camera_snap_entries = clazz.field { name = "pref_camera_snap_entries" }.get().int()
+        val pref_camera_snap_entries = getID("array", "pref_camera_snap_entries")
 
-        val pref_camera_snap_entryvalues = clazz.field { name = "pref_camera_snap_entryvalues" }.get().int()
+        val pref_camera_snap_entryvalues = getID("array", "pref_camera_snap_entryvalues")
     }
+
+    @SuppressLint("DiscouragedApi")
+    fun getID(type: String, name: String): Int =
+        CameraHooker.appResources!!.getIdentifier(name, type, "com.android.camera")
 }

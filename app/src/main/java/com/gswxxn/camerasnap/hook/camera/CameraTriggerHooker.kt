@@ -24,7 +24,7 @@ object CameraTriggerHooker: YukiBaseHooker() {
             injectMember {
                 members(CameraMembers.SnapTriggerMembers.mSnapRunner)
                 replaceUnit {
-                    val mSnapTrigger = SnapTrigger(field { name = "this\$0" }.get(instance).any()!!)
+                    val mSnapTrigger = SnapTrigger(field { type = CameraMembers.SnapTriggerMembers.cSnapTrigger }.get(instance).any()!!)
 
                     if (mSnapTrigger.mCamera.instance == null || !mSnapTrigger.mCamera.mIsCamcorder) {
                         callOriginal()

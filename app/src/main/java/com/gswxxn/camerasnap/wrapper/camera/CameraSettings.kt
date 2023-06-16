@@ -7,6 +7,8 @@ import com.gswxxn.camerasnap.hook.CameraHooker
 object CameraSettings {
 
     const val KEY_CAMERA_SNAP = "pref_camera_snap_key"
+    const val KEY_CATEGORY_MODULE_SETTING = "category_module_setting"
+    const val KEY_CATEGORY_PHOTO_SETTING = "category_photo_setting"
 
     fun getPreferVideoQuality(cameraId: Int, moduleIndex: Int) =
         CameraMembers.SettingsMembers.mGetPreferVideoQuality.invoke(null, cameraId, moduleIndex) as Int

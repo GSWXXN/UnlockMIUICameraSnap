@@ -30,7 +30,9 @@ object CameraQueryKey {
 
     const val Util_getDuration = "Util_getDuration"
 
-    const val UserRecordSetting_getQuality = "UserRecordSetting_getQuality"
+    const val UserRecordSetting_isVideoQualityMutex = "UserRecordSetting_isVideoQualityMutex"
 
     const val CameraSettings_getMiuiSettingsKeyForStreetSnap = "CameraSettings_getMiuiSettingsKeyForStreetSnap"
+
+    const val BasePreferenceFragment_initializeActivity = "BasePreferenceFragment_initializeActivity"
 }

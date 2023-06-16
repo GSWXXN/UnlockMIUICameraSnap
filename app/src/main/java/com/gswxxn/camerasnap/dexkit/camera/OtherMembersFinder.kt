@@ -11,6 +11,7 @@ import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodInvoking
 import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodUsingField
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.factory.toClass
+import com.highcapable.yukihookapi.hook.type.java.UnitType
 import io.luckypray.dexkit.builder.BatchFindArgs
 
 object OtherMembersFinder: BaseFinder() {
@@ -26,6 +27,7 @@ object OtherMembersFinder: BaseFinder() {
         addQuery(CameraQueryKey.SnapCamera_initCamera, arrayOf("initCamera: "))
         addQuery(CameraQueryKey.LocationManager_getCurrentLocationDirectly, arrayOf("No location received yet. cache location is "))
         addQuery(CameraQueryKey.Util_getDuration, arrayOf("getDuration Exception"))
+        addQuery(CameraQueryKey.BasePreferenceFragment_initializeActivity, arrayOf("fail to init PreferenceGroup"))
     }
 
     override fun onFindMembers() {
@@ -94,5 +96,15 @@ object OtherMembersFinder: BaseFinder() {
             callerMethodReturnType = DexKitHelper.TypeSignature.INT
             callerMethodParamTypes = arrayOf()
         }
+
+        CameraMembers.OtherMembers.mInitializeActivity = batchFindMethodsUsingStringsResultMap[CameraQueryKey.BasePreferenceFragment_initializeActivity]!!.first {
+            it.declaringClassName == "com.android.camera.fragment.settings.CameraPreferenceFragment" || // 部分 4.3.x 相机位置
+            it.declaringClassName == "com.android.camera.fragment.settings.BasePreferenceFragment" // 更高版本相机位置
+        }.getMethodInstance()
+
+        CameraMembers.OtherMembers.mRegisterListener = "com.android.camera.fragment.settings.BasePreferenceFragment".toClass(CameraHooker.appClassLoader).method {
+            param("androidx.preference.PreferenceGroup", "androidx.preference.Preference\$OnPreferenceChangeListener")
+            returnType = UnitType
+        }.give()!!
     }
 }

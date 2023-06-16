@@ -74,6 +74,9 @@ object CameraMembers {
         lateinit var mGetSensorOrientation: Method
         lateinit var mGetFacing: Method
 
+        // CameraPreferenceFragment 类中被混淆成员的存储类, 4.5.x 之后版本位置为 BasePreferenceFragment
+        lateinit var mInitializeActivity: Method
+        lateinit var mRegisterListener: Method
     }
 
 }

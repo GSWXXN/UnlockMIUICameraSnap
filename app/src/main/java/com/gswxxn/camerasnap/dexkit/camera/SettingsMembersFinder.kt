@@ -21,7 +21,7 @@ object SettingsMembersFinder: BaseFinder() {
     }
 
     override fun prepareBatchFindMethodsUsingStrings(): BatchFindArgs.Builder.() -> Unit = {
-        addQuery(CameraQueryKey.UserRecordSetting_getQuality, arrayOf("getQuality: quality = "))
+        addQuery(CameraQueryKey.UserRecordSetting_isVideoQualityMutex, arrayOf("isTagMutex quality %s, is4KHigher %s"))
         addQuery(CameraQueryKey.CameraSettings_getMiuiSettingsKeyForStreetSnap, arrayOf("none"))
         addQuery(CameraQueryKey.SnapKeyReceiver_onReceive, arrayOf("miui.intent.action.CAMERA_KEY_BUTTON"))
     }
@@ -56,12 +56,12 @@ object SettingsMembersFinder: BaseFinder() {
             loggerE(msg = "not found mGetSupportSnap!!!")
         }
 
-        val getQualityDescriptor = batchFindMethodsUsingStringsResultMap[CameraQueryKey.UserRecordSetting_getQuality]!!.first {
-            it.returnTypeSig == DexKitHelper.TypeSignature.INT
+        val isVideoQualityMutexDescriptor = batchFindMethodsUsingStringsResultMap[CameraQueryKey.UserRecordSetting_isVideoQualityMutex]!!.first {
+            it.returnTypeSig == DexKitHelper.TypeSignature.BOOLEAN
         }
         val cameraSettingsClassDescriptor = batchFindClassesUsingStringsResultMap[CameraQueryKey.CameraSettings]!!.first()
         CameraMembers.SettingsMembers.mGetPreferVideoQuality = bridge.uniqueFindMethodInvoking {
-            methodDescriptor = getQualityDescriptor.descriptor
+            methodDescriptor = isVideoQualityMutexDescriptor.descriptor
 
             beInvokedMethodDeclareClass = cameraSettingsClassDescriptor.name
             beInvokedMethodParameterTypes = arrayOf(DexKitHelper.TypeSignature.INT, DexKitHelper.TypeSignature.INT)
