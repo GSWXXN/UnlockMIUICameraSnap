@@ -66,4 +66,5 @@ dependencies {
     implementation 'org.luckypray:DexKit:1.1.8'
     implementation 'androidx.annotation:annotation:1.6.0'
     compileOnly project(":api:api")
+    implementation project(':blockmiui')
 }
