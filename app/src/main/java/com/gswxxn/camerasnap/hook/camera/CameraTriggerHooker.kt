@@ -1,5 +1,6 @@
 package com.gswxxn.camerasnap.hook.camera
 
+import android.app.PendingIntent
 import com.gswxxn.camerasnap.dexkit.CameraMembers
 import com.gswxxn.camerasnap.hook.CameraHooker.onFindMembers
 import com.gswxxn.camerasnap.wrapper.camera.snap.SnapTrigger
@@ -7,6 +8,9 @@ import com.gswxxn.camerasnap.wrapper.camera.statistic.CameraStatUtils
 import com.gswxxn.camerasnap.wrapper.camera.storage.Storage
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.log.loggerD
+import com.highcapable.yukihookapi.hook.type.android.ContextClass
+import com.highcapable.yukihookapi.hook.type.android.IntentClass
+import com.highcapable.yukihookapi.hook.type.java.IntType
 
 /** CameraTrigger 类的 Hooker **/
 object CameraTriggerHooker: YukiBaseHooker() {
@@ -40,6 +44,26 @@ object CameraTriggerHooker: YukiBaseHooker() {
                             CameraStatUtils.trackSnapInfo(true)
                         }
                     }
+                }
+            }
+        }
+
+        /**
+         * 安卓 S 以上版本, 需要在 [android.app.PendingIntent.getActivity] 方法中添加标记,
+         * 但是 MIUI 相机并没有添加, 这会导致街拍过后准备发送通知时会抛出异常, 通知不能正常发出
+         */
+        PendingIntent::class.java.hook {
+            injectMember {
+                method {
+                    name = "getActivity"
+                    param(ContextClass, IntType, IntentClass, IntType)
+                }
+                beforeHook {
+                    if (appInfo.targetSdkVersion < 31) return@beforeHook
+
+                    val flag = args[3] as Int
+                    if (flag == 0)
+                        args[3] = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 }
             }
         }
