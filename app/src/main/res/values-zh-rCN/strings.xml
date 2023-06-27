@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="pref_camera_snap_default">@string/pref_camera_snap_value_off</string>
+    <string name="pref_camera_snap_enable_title">街拍模式</string>
+    <string name="pref_camera_snap_value_off">关闭</string>
+    <string name="pref_camera_snap_value_take_picture">街拍模式A（息屏状态下，长按音量下键即可连拍）</string>
+    <string name="pref_camera_snap_value_take_movie">街拍模式B（息屏状态下，长按音量下键即可录像）</string>
+    <string name="pref_camera_snap_value_unknown">未知</string>
+    <string name="config_write_failed">写入配置失败，需要Root权限以更改系统设置。</string>
+</resources>

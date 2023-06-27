@@ -1,4 +1,12 @@
 <resources>
-    <string name="app_name">Unlock MIUI Camera Snap</string>
-    <string name="xposed_desc">解锁MIUI街拍模式</string>
+    <string name="app_name" translatable="false">Unlock MIUI Camera Snap</string>
+    <string name="xposed_desc" translatable="false">解锁MIUI街拍模式</string>
+
+    <string name="pref_camera_snap_default">@string/pref_camera_snap_value_off</string>
+    <string name="pref_camera_snap_enable_title">Quick Snap mode</string>
+    <string name="pref_camera_snap_value_off">Off</string>
+    <string name="pref_camera_snap_value_take_picture">Photo</string>
+    <string name="pref_camera_snap_value_take_movie">Video</string>
+    <string name="pref_camera_snap_value_unknown">Unknown</string>
+    <string name="config_write_failed">Root permission is required to change system settings.</string>
 </resources>
