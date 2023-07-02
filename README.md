@@ -26,14 +26,17 @@
 
 ## 已知问题
 * 录像途中可能会被打断重新录制, 经过调查后发现是系统向相机发送了音量下按键被抬起事件. 由于问题发生在系统内, 与相机无关, 所以暂时不打算解决.
+* 5.0.x 的相机的设置中可能不会出现街拍模式的设置, 可以通过 LSPosed 管理器中的模块设置来开启调整街拍模式.
 
 ## 无法使用
 
 请先检查模块是否正常激活，并且作用域是否勾选。
-如果排查后仍有错误，请提交issue，并附上 LSPosed 的日志.
+如果排查后仍有错误，请提交issue，并附上 LSPosed 的日志.  
 酷安[@迷璐](http://www.coolapk.com/u/1189245)
 
 
 ## 致谢
 使用 [Yuki Hook API](https://github.com/fankes/YukiHookAPI) 构建模块  
-使用 [DexKit](https://github.com/LuckyPray/DexKit) 查找被混淆的方法
+使用 [BlockMIUI](https://github.com/Block-Network/blockmiui) 构建UI界面  
+使用 [DexKit](https://github.com/LuckyPray/DexKit) 查找被混淆的方法  
+使用 [libsu](https://github.com/topjohnwu/libsu) 执行 Shell 命令  
