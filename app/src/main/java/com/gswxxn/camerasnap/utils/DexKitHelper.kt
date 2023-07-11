@@ -157,7 +157,7 @@ object DexKitHelper {
         context.getSharedPreferences("unlock_miui_camera_snap_anti_obfuscation", Context.MODE_PRIVATE).edit().apply {
             clear()
 
-            appVersionCode?.let { putInt("app_version_code", it) }
+            appVersionCode?.let { putLong("app_version_code", it) }
             appVersionName?.let { putString("app_version_name", it) }
             putString("module_version_name", BuildConfig.VERSION_NAME)
             putInt("module_version_code", BuildConfig.VERSION_CODE)
@@ -188,10 +188,15 @@ object DexKitHelper {
     fun BaseHookerWithDexKit.loadMembers(context: Context, obj: Any): Boolean {
         val pref = context.getSharedPreferences("unlock_miui_camera_snap_anti_obfuscation", Context.MODE_PRIVATE)
 
-        val isVersionSame = pref.getInt("app_version_code", 0) == appVersionCode &&
-                pref.getString("app_version_name", "") == appVersionName &&
-                pref.getString("module_version_name", "") == BuildConfig.VERSION_NAME &&
-                pref.getInt("module_version_code", 0) == BuildConfig.VERSION_CODE
+        val isVersionSame = try {
+            pref.getLong("app_version_code", 0) == appVersionCode &&
+                    pref.getString("app_version_name", "") == appVersionName &&
+                    pref.getString("module_version_name", "") == BuildConfig.VERSION_NAME &&
+                    pref.getInt("module_version_code", 0) == BuildConfig.VERSION_CODE
+        } catch (e: Exception) {
+            loggerE(msg = "failed to read app or module versions", e = e)
+            return false
+        }
 
         if (!isVersionSame) return false
 
