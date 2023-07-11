@@ -1,11 +1,9 @@
 package com.gswxxn.camerasnap.hook.base
 
 import android.content.Context
-import android.content.pm.PackageParser
 import com.gswxxn.camerasnap.dexkit.base.BaseFinder.Companion.onFinishLoadFinder
 import com.gswxxn.camerasnap.utils.DexKitHelper.loadMembers
 import com.gswxxn.camerasnap.utils.DexKitHelper.storeMembers
-import com.gswxxn.camerasnap.utils.ReflectUtils.getPackage
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.log.loggerI
 import com.highcapable.yukihookapi.hook.type.android.ContextClass
@@ -15,14 +13,10 @@ import io.luckypray.dexkit.DexKitBridge
 /** 使用 DexKit 的 Base Hooker, 在需要的作用域 Hooker 入口继承使用 **/
 abstract class BaseHookerWithDexKit: YukiBaseHooker() {
     open var storeMemberClass: Any? = null
-    var appVersionCode: Int? = null
+    var appVersionCode: Long? = null
     var appVersionName: String? = null
 
     override fun onHook() {
-        val packageParser: PackageParser.Package = appInfo.getPackage()
-        appVersionCode = packageParser.mVersionCode
-        appVersionName = packageParser.mVersionName
-
         ContextWrapperClass.hook {
             injectMember {
                 method {
@@ -31,6 +25,9 @@ abstract class BaseHookerWithDexKit: YukiBaseHooker() {
                 }
                 afterHook {
                     val context = args(0).cast<Context>()!!
+                    val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+                    appVersionCode = packageInfo.longVersionCode
+                    appVersionName = packageInfo.versionName
 
                     val startTime = System.currentTimeMillis()
 
