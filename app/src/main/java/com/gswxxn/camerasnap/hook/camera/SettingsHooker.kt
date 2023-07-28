@@ -4,6 +4,7 @@ import android.content.Context
 import android.provider.Settings
 import com.gswxxn.camerasnap.constant.Key
 import com.gswxxn.camerasnap.dexkit.CameraMembers
+import com.gswxxn.camerasnap.hook.CameraHooker
 import com.gswxxn.camerasnap.hook.CameraHooker.onFindMembers
 import com.gswxxn.camerasnap.utils.ReflectUtils.isSubClassOf
 import com.gswxxn.camerasnap.utils.ReflectUtils.methodHook
@@ -12,6 +13,7 @@ import com.gswxxn.camerasnap.wrapper.camera.R
 import com.gswxxn.camerasnap.wrapper.camera.fragment.settings.CameraPreferenceFragment
 import com.gswxxn.camerasnap.wrapper.camera.ui.PreviewListPreference
 import com.gswxxn.camerasnap.wrapper.preference.PreferenceGroup
+import com.highcapable.yukihookapi.hook.core.YukiMemberHookCreator
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.factory.current
 import com.highcapable.yukihookapi.hook.log.loggerE
@@ -43,8 +45,8 @@ object SettingsHooker: YukiBaseHooker() {
             }
         }
 
-        // 向旧版本的相机添加街拍设置项
-        "com.android.camera.fragment.settings.CameraPreferenceFragment".hook {
+        // 创建街拍设置项 hookCreator
+        val itemHookCreator: YukiMemberHookCreator.() -> Unit = {
             injectMember {
                 method {
                     superClass()
@@ -53,52 +55,44 @@ object SettingsHooker: YukiBaseHooker() {
                 }
                 afterHook {
                     addSnapSetting(CameraPreferenceFragment(instance), CameraSettings.KEY_CATEGORY_MODULE_SETTING)
-                }
-            }
-        }.onHookClassNotFoundFailure {
-            loggerE(msg = "com.android.camera.fragment.settings.CameraPreferenceFragment not found")
-        }
-
-        // 向 5.0.x 版本的相机添加街拍设置项
-        "com.android.camera2.compat.theme.custom.mm.setting.CameraPreferenceFragmentMM".hook {
-            injectMember {
-                method {
-                    superClass(true)
-                    name = CameraMembers.OtherMembers.mInitializeActivity.name
-                    emptyParam()
-                }
-                afterHook {
                     addSnapSetting(CameraPreferenceFragment(instance), CameraSettings.KEY_CATEGORY_PHOTO_SETTING)
                 }
             }
 
-            // 注册点击事件
-            injectMember {
-                method {
-                    name = "onPreferenceChange"
-                    param("androidx.preference.Preference", AnyClass)
-                }
-                beforeHook {
-                    val key = args[0]!!.current().method { name = "getKey"; emptyParam(); superClass() }.string()
-                    val preferenceValue = args[1]
-                    if (key != CameraSettings.KEY_CAMERA_SNAP || preferenceValue == null) { return@beforeHook }
-
-                    val cameraPreferenceFragment = CameraPreferenceFragment(instance)
-                    var snapConfig = cameraPreferenceFragment.getString(R.string.pref_camera_snap_value_off)
-                    when (preferenceValue) {
-                        is Boolean ->
-                            snapConfig = if (preferenceValue) cameraPreferenceFragment.getString(R.string.pref_camera_snap_value_take_picture)
-                            else cameraPreferenceFragment.getString(R.string.pref_camera_snap_value_off)
-                        is String ->
-                            snapConfig = preferenceValue
+            // 注册点击事件, 选中后将结果写入系统设置
+            // 旧版相机不需要, 因为其已包含此片段
+            if (CameraHooker.isNewCameraVersion)
+                injectMember {
+                    method {
+                        name = "onPreferenceChange"
+                        param("androidx.preference.Preference", AnyClass)
                     }
+                    beforeHook {
+                        val key = args[0]!!.current().method { name = "getKey"; emptyParam(); superClass() }.string()
+                        val preferenceValue = args[1]
+                        if (key != CameraSettings.KEY_CAMERA_SNAP || preferenceValue == null) { return@beforeHook }
 
-                    Settings.Secure.putString(cameraPreferenceFragment.getActivity().contentResolver, Key.LONG_PRESS_VOLUME_DOWN, CameraSettings.getMiuiSettingsKeyForStreetSnap(snapConfig))
-                    resultTrue()
+                        val cameraPreferenceFragment = CameraPreferenceFragment(instance)
+                        var snapConfig = cameraPreferenceFragment.getString(R.string.pref_camera_snap_value_off)
+                        when (preferenceValue) {
+                            is Boolean ->
+                                snapConfig = if (preferenceValue) cameraPreferenceFragment.getString(R.string.pref_camera_snap_value_take_picture)
+                                else cameraPreferenceFragment.getString(R.string.pref_camera_snap_value_off)
+                            is String ->
+                                snapConfig = preferenceValue
+                        }
+
+                        Settings.Secure.putString(cameraPreferenceFragment.getActivity().contentResolver, Key.LONG_PRESS_VOLUME_DOWN, CameraSettings.getMiuiSettingsKeyForStreetSnap(snapConfig))
+                        resultTrue()
+                    }
                 }
-            }
-        }.onHookClassNotFoundFailure {
-            loggerE(msg = "com.android.camera2.compat.theme.custom.mm.setting.CameraPreferenceFragmentMM not found")
+        }
+        // 向相机添加街拍设置项
+        arrayOf(
+            "com.android.camera.fragment.settings.CameraPreferenceFragment",
+            "com.android.camera2.compat.theme.custom.mm.setting.CameraPreferenceFragmentMM"
+        ).forEach { clazz ->
+            clazz.hook(itemHookCreator).onHookClassNotFoundFailure { loggerE(msg = "$clazz not found") }
         }
     }
 

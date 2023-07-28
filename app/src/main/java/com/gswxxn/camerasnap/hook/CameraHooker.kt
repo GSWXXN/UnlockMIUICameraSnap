@@ -15,6 +15,7 @@ import io.luckypray.dexkit.DexKitBridge
 /** 相机 Hooker**/
 object CameraHooker: BaseHookerWithDexKit() {
     override var storeMemberClass: Any? = CameraMembers
+    val isNewCameraVersion: Boolean by lazy { appVersionCode!! >= 500000000 }
 
     /** 开始查找混淆成员 **/
     override fun onFindMembers(bridge: DexKitBridge) {
