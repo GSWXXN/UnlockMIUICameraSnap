@@ -5,7 +5,7 @@ import com.gswxxn.camerasnap.BuildConfig
 import com.gswxxn.camerasnap.dexkit.base.BaseFinder
 import com.gswxxn.camerasnap.hook.CameraHooker
 import com.gswxxn.camerasnap.hook.base.BaseHookerWithDexKit
-import com.highcapable.yukihookapi.hook.log.loggerE
+import com.highcapable.yukihookapi.hook.log.YLog
 import com.highcapable.yukihookapi.hook.type.java.JavaClass
 import com.highcapable.yukihookapi.hook.type.java.JavaFieldClass
 import com.highcapable.yukihookapi.hook.type.java.JavaMethodClass
@@ -54,7 +54,7 @@ object DexKitHelper {
      *
      * @return [Method]
      */
-    fun DexMethodDescriptor.getMethodInstance() = getMethodInstance(CameraHooker.appClassLoader).apply { isAccessible = true }
+    fun DexMethodDescriptor.getMethodInstance() = getMethodInstance(CameraHooker.appClassLoader!!).apply { isAccessible = true }
 
     /**
      * 查找给定方法的调用函数, 如果有多个查找到的函数, 则会抛出异常
@@ -194,7 +194,7 @@ object DexKitHelper {
                     pref.getString("module_version_name", "") == BuildConfig.VERSION_NAME &&
                     pref.getInt("module_version_code", 0) == BuildConfig.VERSION_CODE
         } catch (e: Exception) {
-            loggerE(msg = "failed to read app or module versions", e = e)
+            YLog.error(msg = "failed to read app or module versions", e = e)
             return false
         }
 
@@ -209,19 +209,19 @@ object DexKitHelper {
                 if (field.type !in arrayOf(JavaClass, JavaMethodClass, JavaFieldClass)) continue
 
                 if (value.isEmpty()) {
-                    loggerE(msg = "failed to load ${key}, pref empty")
+                    YLog.error(msg = "failed to load ${key}, pref empty")
                     return false
                 }
 
                 val instance = try {
                      when (field.type) {
-                        JavaClass -> DexClassDescriptor(value).getClassInstance(appClassLoader)
-                        JavaMethodClass -> DexMethodDescriptor(value).getMethodInstance(appClassLoader).apply { isAccessible = true }
-                        JavaFieldClass -> DexFieldDescriptor(value).getFieldInstance(appClassLoader).apply { isAccessible = true }
+                        JavaClass -> DexClassDescriptor(value).getClassInstance(appClassLoader!!)
+                        JavaMethodClass -> DexMethodDescriptor(value).getMethodInstance(appClassLoader!!).apply { isAccessible = true }
+                        JavaFieldClass -> DexFieldDescriptor(value).getFieldInstance(appClassLoader!!).apply { isAccessible = true }
                         else -> null
                     }
                 } catch (e: ReflectiveOperationException) {
-                    loggerE(msg = "failed to load ${key}, no such members", e = e)
+                    YLog.error(msg = "failed to load ${key}, no such members", e = e)
                     return false
                 }
 

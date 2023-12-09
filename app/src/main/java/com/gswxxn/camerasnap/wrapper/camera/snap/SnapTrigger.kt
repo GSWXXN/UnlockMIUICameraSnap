@@ -3,7 +3,7 @@ package com.gswxxn.camerasnap.wrapper.camera.snap
 import android.os.Handler
 import android.os.PowerManager
 import com.gswxxn.camerasnap.dexkit.CameraMembers
-import com.highcapable.yukihookapi.hook.log.loggerD
+import com.highcapable.yukihookapi.hook.log.YLog
 
 class SnapTrigger(private val instance: Any) {
 
@@ -22,7 +22,7 @@ class SnapTrigger(private val instance: Any) {
 
     fun shutdownWatchDog() {
         if (this.mHandler != null) {
-            loggerD(msg = "watch dog Off")
+            YLog.debug(msg = "watch dog Off")
             this.mHandler!!.removeMessages(101)
         }
     }

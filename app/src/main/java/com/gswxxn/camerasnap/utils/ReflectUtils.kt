@@ -1,9 +1,6 @@
 package com.gswxxn.camerasnap.utils
 
-import com.gswxxn.camerasnap.hook.CameraHooker.hook
-import com.highcapable.yukihookapi.hook.core.YukiMemberHookCreator
 import java.lang.reflect.Field
-import java.lang.reflect.Method
 
 object ReflectUtils {
 
@@ -15,20 +12,6 @@ object ReflectUtils {
     fun Field.setValue(obj: Any, value: Any) {
         this.isAccessible = true
         this.set(obj, value)
-    }
-
-    /**
-     * 对给定 [Method] 执行 Hook
-     *
-     * @param block 要执行的 [Unit]
-     */
-    fun Method.methodHook(block: YukiMemberHookCreator.MemberHookCreator.() -> Unit) {
-        declaringClass.hook {
-            injectMember {
-                members(this@methodHook)
-                block()
-            }
-        }
     }
 
     /**

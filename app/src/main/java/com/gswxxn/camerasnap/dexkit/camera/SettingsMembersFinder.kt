@@ -8,7 +8,7 @@ import com.gswxxn.camerasnap.utils.DexKitHelper.getMethodInstance
 import com.gswxxn.camerasnap.utils.DexKitHelper
 import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodInvoking
 import com.highcapable.yukihookapi.hook.factory.toClass
-import com.highcapable.yukihookapi.hook.log.loggerE
+import com.highcapable.yukihookapi.hook.log.YLog
 import io.luckypray.dexkit.builder.BatchFindArgs
 import java.lang.reflect.Method
 
@@ -53,7 +53,7 @@ object SettingsMembersFinder: BaseFinder() {
         if (mGetSupportSnap != null) {
             CameraMembers.SettingsMembers.mGetSupportSnap = mGetSupportSnap
         } else {
-            loggerE(msg = "not found mGetSupportSnap!!!")
+            YLog.error(msg = "not found mGetSupportSnap!!!")
         }
 
         val isVideoQualityMutexDescriptor = batchFindMethodsUsingStringsResultMap[CameraQueryKey.UserRecordSetting_isVideoQualityMutex]!!.first {

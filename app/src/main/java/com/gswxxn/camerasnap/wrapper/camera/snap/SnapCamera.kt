@@ -27,9 +27,7 @@ import com.gswxxn.camerasnap.wrapper.camera.storage.MediaProviderUtil
 import com.gswxxn.camerasnap.wrapper.camera.storage.Storage
 import com.gswxxn.camerasnap.wrapper.camera2.CameraCapabilities
 import com.highcapable.yukihookapi.hook.factory.*
-import com.highcapable.yukihookapi.hook.log.loggerD
-import com.highcapable.yukihookapi.hook.log.loggerE
-import com.highcapable.yukihookapi.hook.log.loggerW
+import com.highcapable.yukihookapi.hook.log.YLog
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -82,7 +80,7 @@ class SnapCamera(val instance: Any?) {
                 if (this.mCameraCapabilities.getFacing() == 0) (sensorOrientation - this.mOrientation + 360) % 360
                 else (sensorOrientation + this.mOrientation) % 360
         }
-        loggerD(msg = "getOrientationHint: $sensorOrientation")
+        YLog.debug(msg = "getOrientationHint: $sensorOrientation")
         return sensorOrientation
     }
 
@@ -95,7 +93,7 @@ class SnapCamera(val instance: Any?) {
             if (CamcorderProfile.hasProfile(this.mCameraId, preferVideoQuality)) {
                 this.mProfile = CamcorderProfile.get(this.mCameraId, preferVideoQuality)
             } else {
-                loggerW(msg = "invalid camcorder profile $preferVideoQuality")
+                YLog.warn(msg = "invalid camcorder profile $preferVideoQuality")
                 this.mProfile = CamcorderProfile.get(this.mCameraId, CamcorderProfile.QUALITY_720P)
             }
         }
@@ -130,24 +128,24 @@ class SnapCamera(val instance: Any?) {
             // TODO: 位置信息没有被写入, 可能是相机没有后台获取位置权限
             currentLocation?.let { setLocation(currentLocation.latitude.toFloat(), currentLocation.longitude.toFloat()) }
             setMaxFileSize(availableSpace)
-            loggerD(msg = "save to $mPath")
+            YLog.debug(msg = "save to $mPath")
             setOutputFile(mPath)
 
             setOnErrorListener { _, what, _ ->
-                loggerD(msg = "stopCamcorder: MediaRecorder error: $what")
+                YLog.debug(msg = "stopCamcorder: MediaRecorder error: $what")
                 stopCamcorder()
             }
             setOnInfoListener { _, what, _ ->
                 if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_DURATION_REACHED ||
                     what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) {
-                    loggerD(msg = "stopCamcorder: duration or file size reach MAX, $what")
+                    YLog.debug(msg = "stopCamcorder: duration or file size reach MAX, $what")
                     stopCamcorder()
                 }
             }
             try {
                 prepare()
             } catch (e: IOException) {
-                loggerE( msg = "prepare failed for $mPath ${e.message}", e = e)
+                YLog.error( msg = "prepare failed for $mPath ${e.message}", e = e)
             }
         }
 
@@ -181,7 +179,7 @@ class SnapCamera(val instance: Any?) {
             mBackgroundThread = null
             mBackgroundHandler = null
         } catch (e: InterruptedException) {
-            loggerE(msg = "stopBackgroundThread: ${e.message}", e = e)
+            YLog.error(msg = "stopBackgroundThread: ${e.message}", e = e)
         }
     }
 
@@ -192,16 +190,16 @@ class SnapCamera(val instance: Any?) {
     fun stopCamcorder() {
         var uri: Uri? = null
         if (mMediaRecorder == null) {
-            loggerD(msg = "stopCamcorder: mMediaRecorder is null")
+            YLog.debug(msg = "stopCamcorder: mMediaRecorder is null")
             return
         }
-        loggerD(msg = "stopCamcorder: $mRecording")
+        YLog.debug(msg = "stopCamcorder: $mRecording")
         if (mRecording) {
             try {
                 mMediaRecorder!!.stop()
             } catch (e: Exception) {
                 mRecording = false
-                loggerE(msg = "mMediaRecorder stop failed, ${e.message}", e = e)
+                YLog.error(msg = "mMediaRecorder stop failed, ${e.message}", e = e)
             }
         }
         mMediaRecorder!!.reset()
@@ -226,12 +224,12 @@ class SnapCamera(val instance: Any?) {
                     mContentValues.put("duration", duration)
                     uri = MediaProviderUtil.getContentUriFromPath(this.mContext, path)
                 } catch (e: Exception) {
-                    loggerE(msg = "Failed to write MediaStore ${e.message}", e = e)
+                    YLog.error(msg = "Failed to write MediaStore ${e.message}", e = e)
                     mRecording = false
                 }
             }
         }
-        loggerD(msg = "stopCamcorder: uri = $uri")
+        YLog.debug(msg = "stopCamcorder: uri = $uri")
         this.mStatusListener!!.onDone(uri)
 
         mRecording = false
@@ -243,7 +241,7 @@ class SnapCamera(val instance: Any?) {
     @Synchronized
     fun startCamcorder() {
         if (mCameraDevice == null) {
-            loggerE(msg = "startCamcorder: CameraDevice is opening or was already closed")
+            YLog.error(msg = "startCamcorder: CameraDevice is opening or was already closed")
             return
         }
         startBackgroundThread()
@@ -255,7 +253,7 @@ class SnapCamera(val instance: Any?) {
             }
             val sessionStateCallback = object : CameraCaptureSession.StateCallback() {
                 override fun onConfigureFailed(session: CameraCaptureSession) {
-                    loggerE(msg = "videoSessionCb::onConfigureFailed")
+                    YLog.error(msg = "videoSessionCb::onConfigureFailed")
                     stopCamcorder()
                 }
 
@@ -269,7 +267,7 @@ class SnapCamera(val instance: Any?) {
                                     try {
                                         mMediaRecorder!!.start()
                                     } catch (e: java.lang.Exception) {
-                                        loggerE(msg = "failed to start media recorder: ${e.message}", e = e)
+                                        YLog.error(msg = "failed to start media recorder: ${e.message}", e = e)
                                         stopCamcorder()
                                     }
                                     mRecording = true
@@ -278,7 +276,7 @@ class SnapCamera(val instance: Any?) {
                             mBackgroundHandler
                         )
                     } catch (e: CameraAccessException) {
-                        loggerE(msg = "videoSessionCb::onConfigured: ${e.message}", e = e)
+                        YLog.error(msg = "videoSessionCb::onConfigured: ${e.message}", e = e)
                     }
                 }
             }
@@ -292,7 +290,7 @@ class SnapCamera(val instance: Any?) {
             )
             mCameraDevice!!.createCaptureSession(sessionConfiguration)
         } catch (e: CameraAccessException) {
-            loggerE(msg = "failed to startCamcorder: ${e.message}", e = e)
+            YLog.error(msg = "failed to startCamcorder: ${e.message}", e = e)
         }
     }
 }
