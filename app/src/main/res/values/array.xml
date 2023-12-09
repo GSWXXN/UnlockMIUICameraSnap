@@ -2,5 +2,6 @@
 <resources>
     <string-array name="module_scope">
         <item>com.android.camera</item>
+        <item>android</item>
     </string-array>
 </resources>
