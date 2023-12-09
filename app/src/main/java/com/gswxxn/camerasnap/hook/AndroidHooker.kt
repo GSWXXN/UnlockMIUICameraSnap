@@ -9,6 +9,7 @@ import android.view.KeyEvent
 import com.highcapable.yukihookapi.hook.entity.YukiBaseHooker
 import com.highcapable.yukihookapi.hook.factory.current
 import com.highcapable.yukihookapi.hook.factory.field
+import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.log.loggerI
 import com.highcapable.yukihookapi.hook.type.java.BooleanType
 import com.highcapable.yukihookapi.hook.type.java.IntType
@@ -44,9 +45,10 @@ object AndroidHooker: YukiBaseHooker() {
                 }
 
                 beforeHook {
-                    val hasStreetSnapMethod = runCatching {
-                        instance.current().method { name = "streetSnap" }
-                    }.isSuccess
+                    var hasStreetSnapMethod = true
+                    instanceClass.method { name = "streetSnap" }.ignored().onNoSuchMethod {
+                        hasStreetSnapMethod = false
+                    }
 
                     val mSystemBooted = instance.current().field {
                         superClass(true)
