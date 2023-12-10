@@ -44,16 +44,16 @@ class PreviewListPreference(private val instance: Any) {
         param(IntType)
     }.call(title)
 
-    fun setEntries(entries: Int) = instance.current().method {
+    fun setEntries(entries: Array<CharSequence>) = instance.current().method {
         superClass()
         name = "setEntries"
-        param(IntType)
+        param(Array<CharSequence>::class.java)
     }.call(entries)
 
-    fun setEntryValues(entryValues: Int) = instance.current().method {
+    fun setEntryValues(entryValues: Array<CharSequence>) = instance.current().method {
         superClass()
         name = "setEntryValues"
-        param(IntType)
+        param(Array<CharSequence>::class.java)
     }.call(entryValues)
 
     fun setPersistent(persistent: Boolean) = instance.current().method {

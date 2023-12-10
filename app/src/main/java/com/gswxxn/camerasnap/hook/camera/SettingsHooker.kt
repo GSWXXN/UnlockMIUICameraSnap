@@ -130,8 +130,16 @@ object SettingsHooker: YukiBaseHooker() {
             setKey(CameraSettings.KEY_CAMERA_SNAP)
             setDefaultValue(cameraPreferenceFragment.getString(R.string.pref_camera_snap_default))
             setTitle(R.string.pref_camera_snap_enable_title)
-            setEntries(R.array.pref_camera_snap_entries)
-            setEntryValues(R.array.pref_camera_snap_entryvalues)
+            setEntries(arrayOf(
+                context.getString(R.string.pref_camera_snap_entry_take_picture),
+                context.getString(R.string.pref_camera_snap_entry_take_movie),
+                context.getString(R.string.pref_camera_snap_entry_off)
+            ))
+            setEntryValues(arrayOf(
+                context.getString(R.string.pref_camera_snap_value_take_picture),
+                context.getString(R.string.pref_camera_snap_value_take_movie),
+                context.getString(R.string.pref_camera_snap_value_off)
+            ))
             setPersistent(false)
             setOrder(3)
         }

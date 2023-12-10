@@ -6,6 +6,12 @@ import com.gswxxn.camerasnap.hook.CameraHooker
 object R {
     object string {
 
+        val pref_camera_snap_entry_take_picture = getID("string", "pref_camera_snap_entry_take_picture")
+
+        val pref_camera_snap_entry_take_movie = getID("string", "pref_camera_snap_entry_take_movie")
+
+        val pref_camera_snap_entry_off = getID("string", "pref_camera_snap_entry_off")
+
         val pref_camera_snap_default = getID("string", "pref_camera_snap_default")
 
         val pref_camera_snap_enable_title = getID("string", "pref_camera_snap_enable_title")
@@ -15,13 +21,6 @@ object R {
         val pref_camera_snap_value_take_picture = getID("string", "pref_camera_snap_value_take_picture")
 
         val pref_camera_snap_value_take_movie = getID("string", "pref_camera_snap_value_take_movie")
-    }
-
-    object array {
-
-        val pref_camera_snap_entries = getID("array", "pref_camera_snap_entries")
-
-        val pref_camera_snap_entryvalues = getID("array", "pref_camera_snap_entryvalues")
     }
 
     @SuppressLint("DiscouragedApi")
