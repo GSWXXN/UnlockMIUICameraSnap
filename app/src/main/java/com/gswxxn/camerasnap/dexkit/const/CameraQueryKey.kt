@@ -30,7 +30,7 @@ object CameraQueryKey {
 
     const val Util_getDuration = "Util_getDuration"
 
-    const val UserRecordSetting_isVideoQualityMutex = "UserRecordSetting_isVideoQualityMutex"
+    const val FunModule_updatePictureAndPreviewSize = "UserRecordSetting_updatePictureAndPreviewSize"
 
     const val CameraSettings_getMiuiSettingsKeyForStreetSnap = "CameraSettings_getMiuiSettingsKeyForStreetSnap"
 

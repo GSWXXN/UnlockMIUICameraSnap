@@ -17,11 +17,11 @@ object SettingsMembersFinder: BaseFinder() {
 
     override fun prepareBatchFindClassesUsingStrings(): BatchFindArgs.Builder.() -> Unit = {
         addQuery(CameraQueryKey.CameraSettings, arrayOf("filterByConfig: isSupportVideoFrontMirror = "))
-        addQuery(CameraQueryKey.DataItemFeature, arrayOf("ro.boot.camera.config"))
+        addQuery(CameraQueryKey.DataItemFeature, arrayOf("supermoon", "supernight"))
     }
 
     override fun prepareBatchFindMethodsUsingStrings(): BatchFindArgs.Builder.() -> Unit = {
-        addQuery(CameraQueryKey.UserRecordSetting_isVideoQualityMutex, arrayOf("isTagMutex quality %s, is4KHigher %s"))
+        addQuery(CameraQueryKey.FunModule_updatePictureAndPreviewSize, arrayOf("previewSize: "))
         addQuery(CameraQueryKey.CameraSettings_getMiuiSettingsKeyForStreetSnap, arrayOf("none"))
         addQuery(CameraQueryKey.SnapKeyReceiver_onReceive, arrayOf("miui.intent.action.CAMERA_KEY_BUTTON"))
     }
@@ -56,12 +56,13 @@ object SettingsMembersFinder: BaseFinder() {
             YLog.error(msg = "not found mGetSupportSnap!!!")
         }
 
-        val isVideoQualityMutexDescriptor = batchFindMethodsUsingStringsResultMap[CameraQueryKey.UserRecordSetting_isVideoQualityMutex]!!.first {
-            it.returnTypeSig == DexKitHelper.TypeSignature.BOOLEAN
+        val updatePictureAndPreviewSize = batchFindMethodsUsingStringsResultMap[CameraQueryKey.FunModule_updatePictureAndPreviewSize]!!.first {
+            it.declaringClassName == "com.android.camera.module.FunModule" &&
+                    it.returnTypeSig == DexKitHelper.TypeSignature.VOID
         }
         val cameraSettingsClassDescriptor = batchFindClassesUsingStringsResultMap[CameraQueryKey.CameraSettings]!!.first()
         CameraMembers.SettingsMembers.mGetPreferVideoQuality = bridge.uniqueFindMethodInvoking {
-            methodDescriptor = isVideoQualityMutexDescriptor.descriptor
+            methodDescriptor = updatePictureAndPreviewSize.descriptor
 
             beInvokedMethodDeclareClass = cameraSettingsClassDescriptor.name
             beInvokedMethodParameterTypes = arrayOf(DexKitHelper.TypeSignature.INT, DexKitHelper.TypeSignature.INT)
