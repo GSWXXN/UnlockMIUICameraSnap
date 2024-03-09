@@ -11,6 +11,8 @@ import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodInvoking
 import com.gswxxn.camerasnap.utils.DexKitHelper.uniqueFindMethodUsingField
 import com.highcapable.yukihookapi.hook.factory.method
 import com.highcapable.yukihookapi.hook.factory.toClass
+import com.highcapable.yukihookapi.hook.factory.toClassOrNull
+import com.highcapable.yukihookapi.hook.type.java.StringClass
 import com.highcapable.yukihookapi.hook.type.java.UnitType
 import io.luckypray.dexkit.builder.BatchFindArgs
 
@@ -65,7 +67,10 @@ object OtherMembersFinder: BaseFinder() {
         val getCurrentLocationDirectlyMethodDescriptor = batchFindMethodsUsingStringsResultMap[CameraQueryKey.LocationManager_getCurrentLocationDirectly]!!.first {
             it.parameterTypesSig == "" && it.returnTypeSig == DexKitHelper.TypeSignature.LOCATION
         }
-        CameraMembers.OtherMembers.mGetCurrentLocation = bridge.uniqueFindMethodCalling {
+        CameraMembers.OtherMembers.mGetCurrentLocation = "com.android.camera.LocationManager".toClassOrNull(CameraHooker.appClassLoader)?.method {
+            name = "getCurrentLocation"
+            emptyParam()
+        }?.give() ?: bridge.uniqueFindMethodCalling {
             methodDescriptor = getCurrentLocationDirectlyMethodDescriptor.descriptor
 
             callerMethodDeclareClass = locationManagerClassDescriptor.name
@@ -73,7 +78,10 @@ object OtherMembersFinder: BaseFinder() {
             callerMethodReturnType = DexKitHelper.TypeSignature.LOCATION
         }
 
-        CameraMembers.OtherMembers.mGetDuration = batchFindMethodsUsingStringsResultMap[CameraQueryKey.Util_getDuration]!!.first {
+        CameraMembers.OtherMembers.mGetDuration = "com.android.camera.Util".toClassOrNull(CameraHooker.appClassLoader)?.method {
+            name = "getDuration"
+            param(StringClass)
+        }?.give() ?: batchFindMethodsUsingStringsResultMap[CameraQueryKey.Util_getDuration]!!.first {
             it.parameterTypesSig == DexKitHelper.TypeSignature.STRING && it.returnTypeSig == DexKitHelper.TypeSignature.LONG
         }.getMethodInstance()
 

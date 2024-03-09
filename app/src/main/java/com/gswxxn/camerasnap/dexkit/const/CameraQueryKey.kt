@@ -9,6 +9,7 @@ object CameraQueryKey {
     const val LocationManager = "LocationManager"
     const val CameraSettings = "CameraSetting"
     const val DataItemFeature = "DataItemFeature"
+    const val DataItemFeatureOld = "DataItemFeature_Old"
 
     // methods
     const val SnapTrigger_onCameraOpened = "SnapTrigger_onCameraOpened"

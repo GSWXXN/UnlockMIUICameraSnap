@@ -18,6 +18,7 @@ object SettingsMembersFinder: BaseFinder() {
     override fun prepareBatchFindClassesUsingStrings(): BatchFindArgs.Builder.() -> Unit = {
         addQuery(CameraQueryKey.CameraSettings, arrayOf("filterByConfig: isSupportVideoFrontMirror = "))
         addQuery(CameraQueryKey.DataItemFeature, arrayOf("supermoon", "supernight"))
+        addQuery(CameraQueryKey.DataItemFeatureOld, arrayOf("ro.boot.camera.config"))
     }
 
     override fun prepareBatchFindMethodsUsingStrings(): BatchFindArgs.Builder.() -> Unit = {
@@ -31,7 +32,7 @@ object SettingsMembersFinder: BaseFinder() {
         // 混淆前类名 com.android.camera.CameraSettings
         CameraMembers.SettingsMembers.cCameraSettings = batchFindClassesUsingStringsResultMap[CameraQueryKey.CameraSettings]!!.first().name.toClass(CameraHooker.appClassLoader)
 
-        val dataItemFeatureClassDescriptors = batchFindClassesUsingStringsResultMap[CameraQueryKey.DataItemFeature]!!
+        val dataItemFeatureClassDescriptors = batchFindClassesUsingStringsResultMap[CameraQueryKey.DataItemFeature]!! + batchFindClassesUsingStringsResultMap[CameraQueryKey.DataItemFeatureOld]!!
         val snapKeyReceiverOnReceiveDescriptor = batchFindMethodsUsingStringsResultMap[CameraQueryKey.SnapKeyReceiver_onReceive]!!.first {
             it.returnTypeSig == DexKitHelper.TypeSignature.VOID
         }
