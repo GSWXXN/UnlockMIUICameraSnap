@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name" translatable="false">Unlock MIUI Camera Snap</string>
-    <string name="xposed_desc" translatable="false">解锁MIUI街拍模式</string>
+    <string name="app_name" translatable="false">还我街拍模式</string>
+    <string name="xposed_desc" translatable="false">在新版 MIUI/HyperOS 中使用 MIUI 的旧版街拍模式 (息屏拍照/录像)</string>
 </resources>
