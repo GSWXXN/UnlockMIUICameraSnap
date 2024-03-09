@@ -16,6 +16,7 @@ abstract class BaseHookerWithDexKit: YukiBaseHooker() {
     open var storeMemberClass: Any? = null
     var appVersionCode: Long? = null
     var appVersionName: String? = null
+    private var isHooked: Boolean = false
 
     override fun onHook() {
         ContextWrapperClass.method {
@@ -23,6 +24,7 @@ abstract class BaseHookerWithDexKit: YukiBaseHooker() {
             param(ContextClass)
         }.hook {
             after {
+                if (isHooked) return@after
 
                 val context = args(0).cast<Context>()!!
                 val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
@@ -47,6 +49,8 @@ abstract class BaseHookerWithDexKit: YukiBaseHooker() {
                 YLog.info(msg = "load obfuscated members in $packageName cost ${endTime - startTime}ms")
 
                 startHook()
+
+                isHooked = true
             }
         }
     }
